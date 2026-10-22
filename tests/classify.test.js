@@ -125,3 +125,12 @@ test('priority order is P0 < P1 < P2 < P3 and the default rules load', () => {
   assert.ok(priorityRank('P0') < priorityRank('P1') && priorityRank('P2') < priorityRank('P3'));
   assert.ok(defaultRules().rules.length > 20);
 });
+
+test('credentialOf finds the password in a connection URL and nothing else', async () => {
+  const { credentialOf } = await import('../skills/apikeys-handler/scripts/classify.js');
+  assert.equal(credentialOf('redis://:s3cr3tpass@cache:6379'), 's3cr3tpass');
+  assert.equal(credentialOf('postgres://app:hunter2hunter2@db:5432/app'), 'hunter2hunter2');
+  assert.equal(credentialOf('https://example.com/path'), null);
+  assert.equal(credentialOf('plain-value'), null);
+  assert.equal(credentialOf(null), null);
+});

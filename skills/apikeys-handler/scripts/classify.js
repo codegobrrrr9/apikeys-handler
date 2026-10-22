@@ -94,6 +94,13 @@ export function classify(name, value, rules = defaultRules()) {
   return out;
 }
 
+// The password inside a connection URL (redis://:pw@host, postgres://user:pw@host/db), or null.
+export function credentialOf(value) {
+  if (typeof value !== 'string') return null;
+  const m = /^[a-z][a-z0-9+.-]*:\/\/[^/\s:@]*:([^@\s]+)@/i.exec(value);
+  return m ? m[1] : null;
+}
+
 // ---------- fingerprints ----------
 function home() { return process.env.APIKEYS_HANDLER_HOME || join(homedir(), '.apikeys-handler'); }
 let keyCache = null;

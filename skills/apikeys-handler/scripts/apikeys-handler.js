@@ -79,7 +79,8 @@ function printScan(items, warnings, flags) {
     rows.sort((a, b) => a.priority.localeCompare(b.priority) || a.name.localeCompare(b.name));
     for (const i of rows) {
       const tag = i.derived ? 'derived' : i.empty ? 'empty' : i.how;
-      const used = i.usedBy.length ? `  used by ${i.usedBy.map(u => u.service).join(', ')}` : '';
+      const users = [...new Set(i.usedBy.map(u => u.service))].filter(s => s !== i.service);
+      const used = (users.length ? `  used by ${users.join(', ')}` : '') + ((i.links || []).length ? `  same secret as ${i.links.map(l => l.name + ' (' + (l.service ?? 'shared') + ')').join(', ')}` : '');
       const exp = i.exposed === true ? '  EXPOSED' : '';
       out(`  ${i.priority}  ${pad(i.category, 22)} ${pad(i.name, 30)} ${pad(tag, 9)}${flags['no-fp'] || !i.fp ? '' : ' fp ' + i.fp}${used}${exp}`);
     }

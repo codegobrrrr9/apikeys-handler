@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>apikeys-handler</title>
+<style>
+:root{--bg:#0e1116;--panel:#161b22;--line:#262d37;--text:#e6edf3;--muted:#8b97a5;--accent:#58a6ff;--p0:#ff6b6b;--p1:#ffb454;--p2:#7ee787;--p3:#8b97a5;--ok:#3fb950;--warn:#d29922;--bad:#f85149}
+@media (prefers-color-scheme: light){:root{--bg:#f6f8fa;--panel:#fff;--line:#d0d7de;--text:#1f2328;--muted:#59636e;--accent:#0969da;--p0:#cf222e;--p1:#bc4c00;--p2:#1a7f37;--p3:#59636e;--ok:#1a7f37;--warn:#9a6700;--bad:#cf222e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+h1{font-size:16px;margin:0}
+.pill{border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--muted);font-size:12px}
+.spacer{flex:1}
+button{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:disabled{opacity:.45;cursor:not-allowed}
+input,select{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line)}
+.chip{cursor:pointer;user-select:none}
+.chip[aria-pressed=true]{border-color:var(--accent);color:var(--accent)}
+.stats{color:var(--muted);font-size:12px;padding:8px 16px}
+main{padding:0 16px 80px;max-width:1200px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:14px 0;overflow-x:auto}
+.card>h2{font-size:13px;margin:0;padding:10px 12px;display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
+.card>h2 .where{color:var(--muted);font-weight:400}
+table{width:100%;border-collapse:collapse}
+td{padding:6px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.name{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.badge{display:inline-block;min-width:28px;text-align:center;border-radius:4px;padding:0 6px;font-weight:600;font-size:12px;border:1px solid currentColor}
+.P0{color:var(--p0)}.P1{color:var(--p1)}.P2{color:var(--p2)}.P3{color:var(--p3)}
+.tag{color:var(--muted);font-size:12px}
+.st-verified{color:var(--ok)}.st-failed{color:var(--bad)}.st-written,.st-redeployed,.st-staged{color:var(--warn)}
+.muted{color:var(--muted)}
+.exposed{color:var(--bad);font-size:11px;border:1px solid var(--bad);border-radius:4px;padding:0 4px;margin-left:6px}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;width:min(820px,94vw);max-height:90vh;padding:0}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.dh{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center}
+.db{padding:8px 16px;overflow:auto;max-height:62vh}
+.df{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grp{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:10px 0}
+.grp h3{margin:0 0 4px;font-size:13px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.warn{color:var(--warn);font-size:12px;margin:4px 0}
+.grp input[type=password]{width:100%;margin-top:6px;font-family:ui-monospace,Consolas,monospace}
+a{color:var(--accent)}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px;font-size:12px}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>apikeys-handler</h1>
+  <span class="pill" id="platforms">loading…</span>
+  <span class="pill">local only · values never leave this machine and are never saved</span>
+  <span class="spacer"></span>
+  <button id="report">Export report</button>
+  <button id="quit">Quit</button>
+</header>
+<div class="bar">
+  <label class="muted" for="exposed">Exposed services</label>
+  <input id="exposed" size="26" placeholder="web, worker (comma separated)" aria-describedby="exphelp">
+  <button id="applyExposed">Apply</button>
+  <span class="muted" id="exphelp">Everything those services can read moves up.</span>
+</div>
+<div class="bar" id="filters">
+  <button class="chip" data-p="P0" aria-pressed="true">P0</button>
+  <button class="chip" data-p="P1" aria-pressed="true">P1</button>
+  <button class="chip" data-p="P2" aria-pressed="true">P2</button>
+  <button class="chip" data-p="P3" aria-pressed="false">P3 config</button>
+  <select id="cat" aria-label="Category"><option value="">All categories</option></select>
+  <select id="stat" aria-label="Status"><option value="">Any status</option><option value="pending">Not rotated</option><option value="verified">Verified</option><option value="failed">Failed</option></select>
+  <input id="q" placeholder="Search name or service" aria-label="Search">
+  <span class="spacer"></span>
+  <button id="selP0">Select all P0</button>
+  <button id="selVis">Select visible</button>
+  <button id="clear">Clear</button>
+  <button class="primary" id="go" disabled>Rotate selected (0)</button>
+</div>
+<div class="stats" id="stats"></div>
+<main id="cards"></main>
+
+<dialog id="dlg">
+  <div class="dh"><strong id="dtitle">Rotate</strong><span class="spacer"></span><button id="dclose">Close</button></div>
+  <div class="db" id="dbody"></div>
+  <div class="df" id="dfoot"></div>
+</dialog>
+
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const TOKEN = params.get('t') || '';
+  history.replaceState(null, '', location.pathname);
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+  const api = async (path, body) => {
+    const r = await fetch(path, { method: body ? 'POST' : 'GET', headers: { 'X-AKH-Token': TOKEN, ...(body ? { 'Content-Type': 'application/json' } : {}) }, body: body ? JSON.stringify(body) : undefined });
+    const text = await r.text();
+    let data; try { data = JSON.parse(text); } catch { data = text; }
+    if (!r.ok) throw new Error((data && data.error) || r.statusText);
+    return data;
+  };
+  let items = [], order = [], selected = new Set(), exposed = [];
+  const pri = new Set(['P0', 'P1', 'P2']);
+  const rotatable = (i) => !i.derived && !i.empty && i.how !== 'none';
+
+  async function load() {
+    const q = exposed.length ? '?exposed=' + encodeURIComponent(exposed.join(',')) : '';
+    const d = await api('/api/scan' + q);
+    items = d.items; order = d.categoryOrder; exposed = d.exposed || [];
+    $('platforms').textContent = d.platforms.join(' + ');
+    $('exposed').value = exposed.join(', ');
+    if (!$('cat').options[1]) for (const c of order) { const o = el('option', '', c); o.value = c; $('cat').appendChild(o); }
+    $('stats').textContent = '';
+    if (d.warnings.length) $('stats').textContent = d.warnings.slice(0, 3).join(' · ');
+    render();
+  }
+
+  const visible = () => {
+    const cat = $('cat').value, st = $('stat').value, q = $('q').value.trim().toLowerCase();
+    return items.filter(i => pri.has(i.priority) && (!cat || i.category === cat) && (!st || i.status === st) && (!q || (i.name + ' ' + (i.service || '')).toLowerCase().includes(q)));
+  };
+
+  function render() {
+    const vis = visible();
+    const cards = $('cards'); cards.textContent = '';
+    if (!vis.length) { cards.appendChild(el('div', 'empty', 'No variables match these filters.')); }
+    const byUnit = new Map();
+    for (const i of vis) { const k = i.project + '\u0000' + i.environment + '\u0000' + (i.service || '(shared)') + '\u0000' + i.platform; (byUnit.get(k) || byUnit.set(k, []).get(k)).push(i); }
+    for (const [k, rows] of byUnit) {
+      const [project, env, svc, platform] = k.split('\u0000');
+      const card = el('section', 'card');
+      const h = el('h2'); h.appendChild(el('span', '', svc));
+      h.appendChild(el('span', 'where', ` ${platform} · ${project} · ${env}`));
+      const n = rows.filter(r => rotatable(r) && r.priority !== 'P3').length;
+      h.appendChild(el('span', 'spacer'));
+      h.appendChild(el('span', 'tag', n + ' to rotate'));
+      const allBtn = el('button', '', 'Select all in service'); allBtn.onclick = () => { rows.filter(r => rotatable(r) && r.priority !== 'P3').forEach(r => selected.add(r.id)); render(); };
+      h.appendChild(allBtn);
+      card.appendChild(h);
+      const tb = el('table');
+      rows.sort((a, b) => a.priority.localeCompare(b.priority) || order.indexOf(a.category) - order.indexOf(b.category) || a.name.localeCompare(b.name));
+      for (const i of rows) {
+        const tr = el('tr');
+        const c0 = el('td'); if (rotatable(i)) { const cb = el('input'); cb.type = 'checkbox'; cb.checked = selected.has(i.id); cb.setAttribute('aria-label', 'select ' + i.name); cb.onchange = () => { cb.checked ? selected.add(i.id) : selected.delete(i.id); count(); }; c0.appendChild(cb); }
+        tr.appendChild(c0);
+        const c1 = el('td'); const b = el('span', 'badge ' + i.priority, i.priority); b.title = { P0: 'critical: rotate first', P1: 'high', P2: 'medium', P3: 'config, not a secret' }[i.priority]; c1.appendChild(b); tr.appendChild(c1);
+        tr.appendChild(el('td', 'tag', i.category));
+        const c3 = el('td', 'name', i.name); if (i.exposed === true) c3.appendChild(el('span', 'exposed', 'exposed')); tr.appendChild(c3);
+        const how = i.derived ? 'derived' : i.empty ? 'empty' : i.how === 'none' ? 'config' : i.how;
+        const c4 = el('td', 'tag', how); if (i.link) { c4.appendChild(document.createTextNode(' · ')); const a = el('a', '', i.provider || 'new key'); if (i.link.startsWith('https://')) { a.href = i.link; a.target = '_blank'; a.rel = 'noopener noreferrer'; } c4.appendChild(a); } tr.appendChild(c4);
+        tr.appendChild(el('td', 'tag', (i.usedBy.length ? 'used by ' + i.usedBy.join(', ') : '') + (i.links && i.links.length ? ' · same secret as ' + i.links.join(', ') : '')));
+        tr.appendChild(el('td', 'tag muted', i.fp ? 'fp ' + i.fp.slice(0, 6) : ''));
+        const c7 = el('td', 'st-' + i.status, i.status === 'pending' ? '' : i.status); if (i.error) c7.title = i.error; tr.appendChild(c7);
+        const c8 = el('td'); if (rotatable(i) && i.status !== 'verified') { const rb = el('button', '', 'Rotate'); rb.onclick = () => openRotate([i.id]); c8.appendChild(rb); } tr.appendChild(c8);
+        tb.appendChild(tr);
+      }
+      card.appendChild(tb); cards.appendChild(card);
+    }
+    const all = items.filter(i => rotatable(i) && i.priority !== 'P3');
+    const done = all.filter(i => i.status === 'verified').length;
+    if (!$('stats').textContent) $('stats').textContent = `${items.length} variables · ${all.length} to rotate · ${done} verified · P0 ${all.filter(i => i.priority === 'P0').length} · P1 ${all.filter(i => i.priority === 'P1').length} · P2 ${all.filter(i => i.priority === 'P2').length}`;
+    count();
+  }
+  const count = () => { $('go').textContent = `Rotate selected (${selected.size})`; $('go').disabled = selected.size === 0; };
+
+  $('filters').addEventListener('click', (e) => { const p = e.target.dataset && e.target.dataset.p; if (!p) return; pri.has(p) ? pri.delete(p) : pri.add(p); e.target.setAttribute('aria-pressed', String(pri.has(p))); render(); });
+  for (const id of ['cat', 'stat', 'q']) $(id).addEventListener('input', render);
+  $('selP0').onclick = () => { items.filter(i => rotatable(i) && i.priority === 'P0' && i.status !== 'verified').forEach(i => selected.add(i.id)); render(); };
+  $('selVis').onclick = () => { visible().filter(i => rotatable(i)).forEach(i => selected.add(i.id)); render(); };
+  $('clear').onclick = () => { selected.clear(); render(); };
+  $('applyExposed').onclick = () => { exposed = $('exposed').value.split(',').map(s => s.trim()).filter(Boolean); load(); };
+  $('go').onclick = () => openRotate([...selected]);
+  $('quit').onclick = async () => { try { await api('/api/quit', {}); } catch {} document.body.textContent = 'Stopped. You can close this tab.'; };
+  $('report').onclick = async () => { const md = await api('/api/report'); const a = el('a'); a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown' })); a.download = 'rotation-report.md'; a.click(); };
+  $('dclose').onclick = () => { $('dlg').close(); load(); };
+
+  async function openRotate(ids) {
+    const dlg = $('dlg'), body = $('dbody'), foot = $('dfoot');
+    $('dtitle').textContent = 'Rotate ' + ids.length + ' variable' + (ids.length === 1 ? '' : 's');
+    body.textContent = 'Planning…'; foot.textContent = ''; if (!dlg.open) dlg.showModal();
+    let plan; try { plan = await api('/api/plan', { ids }); } catch (e) { body.textContent = e.message; return; }
+    body.textContent = '';
+    if (!plan.groups.length) { body.appendChild(el('div', 'empty', 'Nothing to rotate for this selection.')); for (const s of plan.skipped) body.appendChild(el('div', 'tag', `${s.service || '(shared)'} ${s.name}: ${s.reason}`)); return; }
+    const inputs = new Map(), include = new Map(), ack = new Map();
+    for (const g of plan.groups) {
+      const box = el('div', 'grp');
+      const h = el('h3'); const inc = el('input'); inc.type = 'checkbox'; inc.checked = true; include.set(g.id, inc); h.appendChild(inc);
+      h.appendChild(el('span', 'badge ' + g.priority, g.priority)); h.appendChild(el('span', 'name', g.names.join(', ')));
+      h.appendChild(el('span', 'tag', `${g.category} · ${g.how} · ${g.services.join(', ')}`)); box.appendChild(h);
+      for (const w of g.warns) box.appendChild(el('div', 'warn', w));
+      if (g.link && g.link.startsWith('https://')) { const a = el('a', '', 'Create the new key at ' + (g.provider || 'the provider')); a.href = g.link; a.target = '_blank'; a.rel = 'noopener noreferrer'; box.appendChild(a); }
+      if (g.how === 'generate') { const l = el('label', 'tag'); const c = el('input'); c.type = 'checkbox'; ack.set(g.id, c); l.appendChild(c); l.appendChild(document.createTextNode(' A new value is generated here. I understand the effect above.')); box.appendChild(l); }
+      else { const p = el('input'); p.type = 'password'; p.autocomplete = 'off'; p.spellcheck = false; p.placeholder = g.how === 'manual' ? 'paste the value after you changed it at the source (empty to skip)' : 'paste the new key (empty to skip)'; inputs.set(g.id, p); box.appendChild(p); }
+      body.appendChild(box);
+    }
+    body.appendChild(el('div', 'tag', `${plan.estimate.writes} writes + ${plan.estimate.redeploys} restarts = ${plan.estimate.total} requests. Restart order: ${plan.restartOrder.join(' → ') || 'none'}.`));
+    const go = el('button', 'primary', 'Rotate now'); foot.appendChild(go);
+    foot.appendChild(el('span', 'tag', 'This changes the variable on the platform. It does not revoke the old key: do that at the provider.'));
+    go.onclick = async () => {
+      const useIds = [], values = {};
+      for (const g of plan.groups) {
+        if (!include.get(g.id).checked) continue;
+        if (g.how === 'generate' && !ack.get(g.id).checked) continue;
+        if (g.how !== 'generate') { const v = inputs.get(g.id).value; if (!v) continue; values[g.id] = v; }
+        useIds.push(...g.itemIds);
+      }
+      for (const p of inputs.values()) p.value = '';
+      if (!useIds.length) { body.prepend(el('div', 'warn', 'Nothing to do: tick a generated group and acknowledge it, or paste a new value.')); return; }
+      go.disabled = true; body.textContent = 'Rotating…';
+      try { await api('/api/rotate', { ids: useIds, values, exposed }); } catch (e) { body.textContent = e.message; return; }
+      pollJob(body, foot);
+    };
+  }
+
+  async function pollJob(body, foot) {
+    const j = await api('/api/job');
+    body.textContent = '';
+    if (j && j.log.length) body.appendChild(el('pre', '', j.log.join('\n')));
+    if (!j || j.status === 'running') { body.prepend(el('div', 'tag', 'Rotating…')); setTimeout(() => pollJob(body, foot), 700); return; }
+    const r = j.result || {};
+    const L = [`Written ${r.written ?? 0} · restarted ${(r.redeployed || []).length} · verified ${r.verified ?? 0} · failed ${(r.failed || []).length} · skipped ${(r.skipped || []).length}`];
+    for (const s of r.skipped || []) L.push(`skipped ${s.names.join(', ')}: ${s.reason}`);
+    for (const f of r.failed || []) L.push(`FAILED ${f.id}: ${f.error}`);
+    for (const m of r.manual || []) L.push(`restart by hand (${m.unit}): ${m.hint}`);
+    for (const u of r.unverified || []) L.push(`unverified ${u.id}: ${u.why}`);
+    body.appendChild(el('pre', '', L.join('\n')));
+    body.appendChild(el('div', 'warn', 'Still yours to do: delete or revoke the OLD keys at each provider, and change database passwords in the database itself. "Verified" means the platform variable changed, not that the old secret is dead.'));
+    selected.clear(); foot.textContent = '';
+  }
+
+  load().catch((e) => { $('cards').appendChild(el('div', 'empty', 'Could not load: ' + e.message)); });
+})();
+</script>
+</body>
+</html>

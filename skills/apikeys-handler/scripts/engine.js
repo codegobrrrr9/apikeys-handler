@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, appendF
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { classify, defaultRules, fingerprint, generateSecret, referencesIn, registerSecret, redact, priorityRank } from './classify.js';
+import { classify, defaultRules, fingerprint, credentialOf, generateSecret, referencesIn, registerSecret, redact, priorityRank } from './classify.js';
 
 const STATE_DIR = '.apikeys-handler';
 const sha8 = (s) => createHash('sha1').update(String(s)).digest('hex').slice(0, 8);
@@ -46,6 +46,17 @@ export async function inventory(adapters, { exposed = [], rules = defaultRules()
       if (src && src !== i && i.service && !src.usedBy.some(u => u.service === i.service)) src.usedBy.push({ service: i.service, scope: i.scope });
     }
   }
+  // A URL such as redis://:pw@host holds a password that may also sit in its own variable (REDIS_PASSWORD). Rotating one
+  // does not change the other, so say so: the two must change together.
+  const byFp = new Map();
+  for (const i of items) if (i.fp && !i.derived && !credentialOf(i.value)) (byFp.get(i.fp) || byFp.set(i.fp, []).get(i.fp)).push(i);
+  for (const i of items) i.links = [];
+  for (const i of items) {
+    const cred = i.derived ? null : credentialOf(i.value);
+    if (!cred) continue;
+    registerSecret(cred);
+    for (const o of byFp.get(fingerprint(cred)) || []) { i.links.push({ name: o.name, service: o.service }); (o.links ||= []).push({ name: i.name, service: i.service }); }
+  }
   const exp = new Set(exposed.map(s => s.trim().toLowerCase()).filter(Boolean));
   for (const i of items) {
     const svcs = String(i.service || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
@@ -63,12 +74,14 @@ export function effectivePriority(base, exposed) {
 
 // ---------- selection and grouping ----------
 export function selectItems(items, sel = {}, state = null) {
+  const ids = sel.ids ? new Set(sel.ids) : null;
   const names = sel.names ? new Set(sel.names.map(n => n.toUpperCase())) : null;
   const cats = sel.categories ? new Set(sel.categories.map(c => c.toLowerCase())) : null;
   const svcs = sel.services ? new Set(sel.services.map(s => s.toLowerCase())) : null;
   const skipped = [];
   const chosen = items.filter(i => {
     const skip = (reason) => { skipped.push({ id: i.id, name: i.name, service: i.service, reason }); return false; };
+    if (ids && !ids.has(i.id)) return false;
     if (names && !names.has(i.name.toUpperCase())) return false;
     if (cats && !cats.has(i.category.toLowerCase())) return false;
     if (svcs && !String(i.service || '').split(',').some(s => svcs.has(s.trim().toLowerCase())) && !i.usedBy.some(u => svcs.has(String(u.service).toLowerCase()))) return false;
@@ -76,9 +89,9 @@ export function selectItems(items, sel = {}, state = null) {
     if (sel.upTo && priorityRank(i.priority) > priorityRank(sel.upTo)) return false;
     if (i.derived) return skip('built from other variables: rotate the source');
     if (i.empty) return skip('empty');
-    if (i.how === 'none' && !sel.names) return false;                    // config: not a rotation target unless named
+    if (i.how === 'none' && !sel.names && !ids) return false;            // config: not a rotation target unless named
     if (i.how === 'none') return skip('classified as config, not a secret');
-    if (i.priority === 'P3' && !sel.includeConfig && !names) return false;
+    if (i.priority === 'P3' && !sel.includeConfig && !names && !ids) return false;
     const st = state?.items?.[i.id];
     if (st && st.status === 'verified' && !sel.again) return skip('already rotated and verified');
     return true;
@@ -99,7 +112,7 @@ export function groupItems(items) {
     return {
       id: 'g-' + sha8(key), key, names: [...new Set(members.map(m => m.name))], category: best.category, priority: best.priority, how,
       provider: members.find(m => m.provider)?.provider || null, link: members.find(m => m.link)?.link || null,
-      warns: [...new Set(members.map(m => m.warn).filter(Boolean))],
+      warns: [...new Set([...members.map(m => m.warn).filter(Boolean), ...members.flatMap(m => (m.links || []).map(l => `${m.name} shares its secret with ${l.name} (${l.service ?? 'shared'}): they hold the same value, so change them together`))])],
       services: [...new Set(members.map(m => m.service ?? '(shared)'))], exposed: members.some(m => m.exposed === true),
       fp: members[0].fp, items: members,
     };

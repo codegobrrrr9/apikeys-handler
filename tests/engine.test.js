@@ -184,3 +184,15 @@ test('railway adapter: waits out one 429, rejects a bad token without echoing it
   assert.throws(() => railwayAdapter({}), /No Railway token/);
   await fake.close();
 });
+
+test('a URL that embeds the password of another variable is linked to it, so the two are changed together', async () => {
+  const { fake, adapter } = await setup({ adapter: prodOnly });
+  const { items } = await inventory([adapter]);
+  await fake.close();
+  const url = items.find(i => i.service === 'api' && i.name === 'REDIS_URL');
+  const pw = items.find(i => i.service === 'Redis' && i.name === 'REDIS_PASSWORD');
+  assert.deepEqual(url.links.map(l => l.name), ['REDIS_PASSWORD']);
+  assert.deepEqual(pw.links.map(l => `${l.name}@${l.service}`).sort(), ['REDIS_URL@api', 'REDIS_URL@worker']);
+  const plan = buildPlan(items, { railway: adapter }, { names: ['REDIS_PASSWORD'] });
+  assert.match(plan.groups[0].warns.join(' '), /shares its secret with REDIS_URL \(api\).*change them together/);
+});
