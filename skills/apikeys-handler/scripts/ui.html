@@ -224,6 +224,7 @@ pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);borde
     const r = j.result || {};
     const L = [`Written ${r.written ?? 0} · restarted ${(r.redeployed || []).length} · verified ${r.verified ?? 0} · failed ${(r.failed || []).length} · skipped ${(r.skipped || []).length}`];
     for (const s of r.skipped || []) L.push(`skipped ${s.names.join(', ')}: ${s.reason}`);
+    for (const s of r.splits || []) L.push(`SPLIT SECRET ${s.names.join(', ')}: ${s.newValue.join(', ')} has the NEW value, ${s.oldValue.join(', ')} still has the OLD one. They must match: rotate it again.`);
     for (const f of r.failed || []) L.push(`FAILED ${f.id}: ${f.error}`);
     for (const m of r.manual || []) L.push(`restart by hand (${m.unit}): ${m.hint}`);
     for (const u of r.unverified || []) L.push(`unverified ${u.id}: ${u.why}`);

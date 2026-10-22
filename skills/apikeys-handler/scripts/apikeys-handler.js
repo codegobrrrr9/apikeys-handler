@@ -13,7 +13,7 @@ import { realpathSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { redact, registerSecret, defaultRules, loadRules } from './classify.js';
-import { inventory, buildPlan, rotate, loadState, reportMarkdown, summarize } from './engine.js';
+import { inventory, buildPlan, rotate, loadState, reportMarkdown, summarize, findSplits } from './engine.js';
 import { railwayAdapter } from './railway.js';
 import { dotenvAdapter } from './dotenv.js';
 
@@ -121,9 +121,22 @@ export function askSecret(prompt) {
   });
 }
 
-function provider(flags, env = process.env) {
+// AKH_NEW_<NAME> supplies a new value by variable name. A name can appear in several groups (production and staging both have
+// STRIPE_SECRET_KEY, and they must not get the same value), so the plain form is used only when exactly one group in the plan
+// carries the name; otherwise it is refused and AKH_NEW_<NAME>__<ENVIRONMENT> is needed.
+export function provider(flags, plan, env = process.env, warn = (m) => err(m)) {
+  const counts = new Map();
+  for (const g of plan?.groups || []) for (const n of g.names) counts.set(n, (counts.get(n) || 0) + 1);
+  const slug = (e) => String(e).toUpperCase().replace(/[^A-Z0-9]/g, '_');
   return async (g) => {
-    for (const n of g.names) { const v = env['AKH_NEW_' + n]; if (v) return v; }
+    const envs = [...new Set(g.items.map(i => i.environment))];
+    for (const n of g.names) {
+      for (const e of envs) { const v = env[`AKH_NEW_${n}__${slug(e)}`]; if (v) return v; }
+      const plain = env['AKH_NEW_' + n];
+      if (!plain) continue;
+      if ((counts.get(n) || 0) <= 1) return plain;
+      warn(`AKH_NEW_${n} is ambiguous: ${counts.get(n)} groups in this plan carry that name (environments: ${envs.join(', ')}). Set AKH_NEW_${n}__<ENVIRONMENT> (for example AKH_NEW_${n}__${slug(envs[0])}) or pass --environment. Not used.`);
+    }
     if (!process.stdin.isTTY) return null;
     out(`\n${g.names.join(', ')}  [${g.priority} ${g.category}]  used in ${g.services.join(', ')}`);
     if (g.link) out(`  create the new key here: ${g.link}`);
@@ -146,6 +159,7 @@ export async function main(argv) {
     out(`apikeys-handler  ·  ${t.total} tracked  ·  verified ${t.verified}  ·  written ${t.written}  ·  restarted ${t.redeployed}  ·  failed ${t.failed}  ·  staged ${t.staged}`);
     for (const i of Object.values(s.items).filter(i => i.status !== 'verified')) out(`  ${i.status.padEnd(10)} ${i.priority} ${i.name} (${i.service ?? 'shared'})${i.error ? ': ' + i.error : ''}`);
     for (const [k, d] of Object.entries(s.deploys).filter(([, d]) => d.status === 'manual')) out(`  restart by hand: ${d.hint}`);
+    for (const sp of findSplits(s)) out(`  !! SPLIT SECRET ${sp.names.join(', ')}: ${sp.newValue.join(', ')} has the NEW value, ${sp.oldValue.join(', ')} still has the OLD one. Rerun the rotation for it.`);
     return t.failed ? 1 : 0;
   }
   if (cmd === 'ui' || cmd === 'demo') {
@@ -185,12 +199,14 @@ export async function main(argv) {
     const ans = await new Promise((r) => { process.stdout.write(`\nRotate ${plan.groups.length} secrets now? Type yes: `); process.stdin.setEncoding('utf8'); process.stdin.once('data', d => { process.stdin.pause(); r(String(d).trim().toLowerCase()); }); });
     if (ans !== 'yes') { out('cancelled, nothing written.'); return 0; }
   }
-  const res = await rotate(items, adapters, { apply: true, dir, exposed, sel, provide: provider(f), log: err });
+  const res = await rotate(items, adapters, { apply: true, dir, exposed, sel, provide: provider(f, plan), log: err });
   out(`\ndone  ·  written ${res.written.length}  ·  restarted ${res.redeployed.length}  ·  verified ${res.verified.length}  ·  failed ${res.failed.length}  ·  skipped ${res.skippedGroups.length}`);
   for (const g of res.skippedGroups) out(`  skipped ${g.names.join(', ')}: ${g.reason}`);
   for (const x of res.failed) out(`  FAILED ${x.id}: ${x.error}`);
   for (const m of res.manualRedeploys) out(`  restart by hand (${m.unit}): ${m.hint}`);
   for (const u of res.unverified) out(`  unverified ${u.id}: ${u.why}`);
+  for (const s of res.splits) out(`
+  !! SPLIT SECRET ${s.names.join(', ')}: ${s.newValue.join(', ')} has the NEW value, ${s.oldValue.join(', ')} still has the OLD one. They must match. Rerun the same command to rewrite all of them with one value.`);
   out('\nStill yours to do: delete or revoke the OLD keys at each provider, and change database passwords in the database itself. A verified status means the platform variable changed, not that the old secret is dead.');
   return res.failed.length ? 1 : 0;
 }

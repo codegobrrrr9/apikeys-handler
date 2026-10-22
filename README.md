@@ -77,7 +77,7 @@ Still yours to do: delete or revoke the OLD keys at each provider, and change da
 
 ## Does it work
 
-**Tests.** 46 run against a fake Railway server, temp git repos, and the real CLI and dashboard over HTTP. They cover, among others: no secret value ever appears in a result, a state file, a report, a CLI output or a dashboard response (including when a platform error echoes the request); a write never carries `replace`; references are never overwritten; one write per scope and one restart per service; resume after a failed restart; a wrong Host or Origin is refused. The three non-Railway platforms are tested against a fake only. See [`platforms.md`](skills/apikeys-handler/references/platforms.md) for what is and is not verified against a live service.
+**Tests.** 49 run against a fake Railway server, temp git repos, and the real CLI and dashboard over HTTP. They cover, among others: no secret value ever appears in a result, a state file, a report, a CLI output or a dashboard response (including when a platform error echoes the request); a write never carries `replace`; a shared secret never ends up with different values in two services after a failed write (the rerun rewrites every member with one value, and says so loudly if it cannot); `AKH_NEW_<NAME>` is refused when production and staging both carry the name; references are never overwritten; one write per scope and one restart per service; resume after a failed restart; a wrong Host or Origin is refused. The three non-Railway platforms are tested against a fake only. See [`platforms.md`](skills/apikeys-handler/references/platforms.md) for what is and is not verified against a live service.
 
 **Classifier benchmark** (names only, value unknown; method, labels and the order of events in [`method.md`](skills/apikeys-handler/references/method.md), numbers in [`benchmarks/`](benchmarks/)). Names come from the example env files of 77 popular public repos (3,182 unique names). I labelled 200 sampled names by hand before running the classifier:
 
@@ -111,7 +111,7 @@ apikeys-handler status | report [--out file.md] | ui | demo
 # selection: --name A,B  --priority P0  --up-to P1  --category Database  --service web  --include-config  --again
 ```
 
-Tokens come from your own environment, never from chat: `RAILWAY_API_TOKEN` (account or workspace token) or `RAILWAY_TOKEN` (project token), `NETLIFY_AUTH_TOKEN`, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`, `SUPABASE_ACCESS_TOKEN`. Pre-supply a new value with `AKH_NEW_<VARIABLE_NAME>` set in your own terminal.
+Tokens come from your own environment, never from chat: `RAILWAY_API_TOKEN` (account or workspace token) or `RAILWAY_TOKEN` (project token), `NETLIFY_AUTH_TOKEN`, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`, `SUPABASE_ACCESS_TOKEN`. Pre-supply a new value with `AKH_NEW_<VARIABLE_NAME>` set in your own terminal; if the same name exists in two environments, use `AKH_NEW_<NAME>__<ENVIRONMENT>` (for example `AKH_NEW_STRIPE_SECRET_KEY__PRODUCTION`). The hidden interactive prompt has only been exercised by hand, not by an automated test.
 
 ## Install by agent
 

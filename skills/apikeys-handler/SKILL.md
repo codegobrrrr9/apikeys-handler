@@ -22,7 +22,7 @@ It does not patch anything. If a runtime was vulnerable, patch it first, or the 
    they show names, categories, priorities and short fingerprints, never values.
 2. **Never ask the user to type a secret into the chat.** New third-party keys go into the dashboard
    (`apikeys-handler ui`), the hidden terminal prompt, or an environment variable the user sets in their own
-   terminal (`AKH_NEW_<VARIABLE_NAME>`). Tokens for the platforms (`RAILWAY_API_TOKEN`, `RAILWAY_TOKEN`,
+   terminal (`AKH_NEW_<VARIABLE_NAME>`, or `AKH_NEW_<NAME>__<ENVIRONMENT>` when production and staging share a name). Tokens for the platforms (`RAILWAY_API_TOKEN`, `RAILWAY_TOKEN`,
    `NETLIFY_AUTH_TOKEN`, `CLOUDFLARE_API_TOKEN`, `SUPABASE_ACCESS_TOKEN`) are set the same way.
 3. **Start with a dry run.** `apikeys-handler plan --exposed <services>` and show the user the order, the
    warnings and the request count. **Ask before `--apply`.** Pass `--yes` only after the user approved that

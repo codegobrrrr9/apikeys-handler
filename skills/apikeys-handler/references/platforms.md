@@ -19,6 +19,7 @@ Every operation string is in one place (`OPS` in `railway.js` and `hosts.js`), s
    `export RAILWAY_API_TOKEN=...`. For a project token use `RAILWAY_TOKEN`.
 3. `apikeys-handler scan --platform railway`, then `plan`, then `rotate --apply` on one generated secret.
 4. Check in the Railway dashboard that exactly that variable changed, the reference did not, and the service restarted once.
+5. Rotate one provider key interactively (no `AKH_NEW_` variable set) and confirm the hidden paste prompt works in your terminal: that path (the "Type yes" confirmation and the raw-mode prompt) is not covered by the automated tests, which all run without a TTY.
 
 Rate limits (Railway docs): 100, 1,000 or 10,000 requests an hour by plan, 10 or 50 a second. `plan` prints the
 number of write and restart requests; listing costs one request per service per environment. On the free plan, scan

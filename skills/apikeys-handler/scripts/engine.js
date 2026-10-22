@@ -99,10 +99,12 @@ export function selectItems(items, sel = {}, state = null) {
   return { chosen, skipped };
 }
 
-export function groupItems(items) {
+// regroup: itemId -> groupId from an earlier run, so members of one logical secret stay together even when their
+// fingerprints have since diverged (one scope was rewritten, another failed).
+export function groupItems(items, regroup = null) {
   const byKey = new Map();
   for (const i of items) {
-    const key = i.fp && !i.unreadable ? 'fp:' + i.fp : 'id:' + i.id;
+    const key = regroup?.get(i.id) ? 'gid:' + regroup.get(i.id) : i.fp && !i.unreadable ? 'fp:' + i.fp : 'id:' + i.id;
     (byKey.get(key) || byKey.set(key, []).get(key)).push(i);
   }
   const cats = defaultRules().categoryOrder;
@@ -110,7 +112,7 @@ export function groupItems(items) {
     const how = members.map(m => m.how).sort((a, b) => HOW_RANK[a] - HOW_RANK[b])[0];
     const best = [...members].sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority) || cats.indexOf(a.category) - cats.indexOf(b.category))[0];
     return {
-      id: 'g-' + sha8(key), key, names: [...new Set(members.map(m => m.name))], category: best.category, priority: best.priority, how,
+      id: key.startsWith('gid:') ? key.slice(4) : 'g-' + sha8(key), key, names: [...new Set(members.map(m => m.name))], category: best.category, priority: best.priority, how,
       provider: members.find(m => m.provider)?.provider || null, link: members.find(m => m.link)?.link || null,
       warns: [...new Set([...members.map(m => m.warn).filter(Boolean), ...members.flatMap(m => (m.links || []).map(l => `${m.name} shares its secret with ${l.name} (${l.service ?? 'shared'}): they hold the same value, so change them together`))])],
       services: [...new Set(members.map(m => m.service ?? '(shared)'))], exposed: members.some(m => m.exposed === true),
@@ -123,9 +125,37 @@ export function groupItems(items) {
 
 // ---------- plan ----------
 const defaultUnitKey = (s) => [s.projectId, s.environmentId, s.serviceId ?? 'shared'].join('|');
+const isDone = (st) => !!st && ['written', 'redeployed', 'verified'].includes(st.status);
+// A group that is only partly rotated (a write failed, or a run died between scopes) is a split secret: some places hold a
+// new value, others the old one. Return, per such group, who has which.
+export function findSplits(state) {
+  const byGroup = new Map();
+  for (const s of Object.values(state?.items || {})) if (s.groupId) (byGroup.get(s.groupId) || byGroup.set(s.groupId, []).get(s.groupId)).push(s);
+  const out = [];
+  for (const [groupId, members] of byGroup) {
+    const done = members.filter(isDone), left = members.filter(m => !isDone(m));
+    if (done.length && left.length) out.push({ groupId, names: [...new Set(members.map(m => m.name))], newValue: done.map(m => m.service ?? '(shared)'), oldValue: left.map(m => m.service ?? '(shared)') });
+  }
+  return out;
+}
+// When any member of a not-fully-rotated group is selected, the whole group comes along and is rewritten with one new value.
+function splitContext(state, chosenIds) {
+  const byGroup = new Map();
+  for (const s of Object.values(state?.items || {})) if (s.groupId) (byGroup.get(s.groupId) || byGroup.set(s.groupId, []).get(s.groupId)).push(s);
+  const forceIds = new Set(), regroup = new Map();
+  for (const [gid, members] of byGroup) {
+    if (members.every(isDone) || !members.some(m => chosenIds.has(m.id))) continue;
+    for (const m of members) { forceIds.add(m.id); regroup.set(m.id, gid); }
+  }
+  return { forceIds, regroup };
+}
+
 export function buildPlan(items, adaptersById, sel = {}, state = null) {
   const { chosen, skipped } = selectItems(items, sel, state);
-  const groups = groupItems(chosen);
+  const ctx = splitContext(state, new Set(chosen.map(i => i.id)));
+  const have = new Set(chosen.map(i => i.id));
+  const pool = [...chosen, ...items.filter(i => ctx.forceIds.has(i.id) && !have.has(i.id) && !i.derived && !i.empty)];
+  const groups = groupItems(pool, ctx.regroup);
   const writes = new Map(), units = new Map();
   const keyOf = (i, scope) => i.adapter + '|' + (adaptersById[i.adapter]?.unitKey || defaultUnitKey)(scope);
   const addUnit = (i, scope, label, priority) => {
@@ -206,10 +236,10 @@ export async function rotate(items, adapters, opts = {}) {
   for (const g of plan.groups) {
     const done = g.items.filter(i => {
       const st = state.items[i.id];
-      return st && ['written', 'redeployed', 'verified'].includes(st.status) && (i.fp === null || i.fp !== st.oldFp);
+      return isDone(st) && (i.fp === null || i.fp !== st.oldFp);
     });
-    for (const d of done) resumed.add(d.id);
-    if (done.length === g.items.length) continue;
+    if (done.length === g.items.length) { for (const d of done) resumed.add(d.id); continue; }
+    // not every member is done: rewrite all of them (including those already done) so the group ends as one value
     let value = null;
     try {
       value = g.how === 'generate' ? generateSecret(g.items.find(i => typeof i.value === 'string')?.value) : await opts.provide?.(g);
@@ -217,7 +247,7 @@ export async function rotate(items, adapters, opts = {}) {
     if (typeof value !== 'string' || value === '') { result.skippedGroups.push({ id: g.id, names: g.names, reason: g.how === 'generate' ? 'could not generate' : 'no new value provided' }); continue; }
     registerSecret(value);
     staged.set(g.id, value);
-    for (const i of g.items) if (!resumed.has(i.id)) mark(state, i, { status: 'staged', groupId: g.id, oldFp: state.items[i.id]?.oldFp ?? i.fp });
+    for (const i of g.items) mark(state, i, { status: 'staged', groupId: g.id, oldFp: isDone(state.items[i.id]) ? i.fp : (state.items[i.id]?.oldFp ?? i.fp) });
   }
   saveState(state, dir);
 
@@ -278,6 +308,7 @@ export async function rotate(items, adapters, opts = {}) {
     else result.unverified.push({ id: i.id, why: 'the variable still has its old value' });
   }
   saveState(state, dir);
+  result.splits = findSplits(state);
   return result;
 }
 

@@ -74,7 +74,7 @@ export async function createUi({ adapters, dir, exposed = [], port = 0 }) {
         (async () => {
           try {
             const r = await rotate(inv.items, adapters, { apply: true, dir, exposed: body.exposed || exposed, sel: { ids: body.ids || [], again: !!body.again }, log: (m) => me.log.push(redact(m)), provide: async (g) => { const v = values[g.id]; values[g.id] = ''; return typeof v === 'string' && v ? v : null; } });
-            me.result = { written: r.written.length, redeployed: r.redeployed, verified: r.verified.length, failed: r.failed, skipped: r.skippedGroups, manual: r.manualRedeploys, unverified: r.unverified };
+            me.result = { splits: r.splits, written: r.written.length, redeployed: r.redeployed, verified: r.verified.length, failed: r.failed, skipped: r.skippedGroups, manual: r.manualRedeploys, unverified: r.unverified };
             me.status = 'done';
           } catch (e) { me.status = 'error'; me.log.push(redact(e.message)); }
           for (const k of Object.keys(values)) delete values[k];     // pasted values leave memory when the job ends

@@ -196,3 +196,42 @@ test('a URL that embeds the password of another variable is linked to it, so the
   const plan = buildPlan(items, { railway: adapter }, { names: ['REDIS_PASSWORD'] });
   assert.match(plan.groups[0].warns.join(' '), /shares its secret with REDIS_URL \(api\).*change them together/);
 });
+
+test('a failed write in one scope never leaves a shared secret split: the rerun rewrites every member with one fresh value', async () => {
+  const opts = { adapter: prodOnly, failServiceIds: ['svc-worker'] };
+  const { fake, adapter, dir } = await setup(opts);
+  const sel = { names: ['JWT_SECRET'] };
+  const OLD = 'demo-jwt-secret-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+  const { items } = await inventory([adapter]);
+  const r1 = await rotate(items, [adapter], { apply: true, dir, sel });
+  const prod = fake.data.projects[0].vars['env-prod'];
+  assert.ok(r1.failed.length > 0, 'the worker write failed');
+  assert.notEqual(prod['svc-api'].JWT_SECRET, OLD); assert.equal(prod['svc-worker'].JWT_SECRET, OLD);
+  assert.equal(r1.splits.length, 1, 'the split is reported loudly, not shown as a partial success');
+  assert.match(JSON.stringify(r1.splits[0]), /JWT_SECRET/);
+  const firstNew = prod['svc-api'].JWT_SECRET;
+  opts.failServiceIds = [];
+  const { items: again } = await inventory([adapter]);
+  const r2 = await rotate(again, [adapter], { apply: true, dir, sel });
+  await fake.close();
+  assert.equal(r2.failed.length, 0, JSON.stringify(r2.failed));
+  assert.equal(prod['svc-api'].JWT_SECRET, prod['svc-worker'].JWT_SECRET, 'one secret, one value');
+  assert.notEqual(prod['svc-worker'].JWT_SECRET, OLD); assert.notEqual(prod['svc-worker'].JWT_SECRET, firstNew);
+  assert.equal(r2.splits.length, 0);
+  assert.ok(Object.values(loadState(dir).items).every(i => i.status === 'verified'));
+});
+
+test('if the rerun has no new value for a split provider/manual group, the split stays reported', async () => {
+  const opts = { adapter: prodOnly, failServiceIds: ['svc-worker'] };
+  const { fake, adapter, dir } = await setup(opts);
+  const sel = { names: ['REDIS_URL'] };
+  const { items } = await inventory([adapter]);
+  const r1 = await rotate(items, [adapter], { apply: true, dir, sel, provide: async () => 'redis://:brandnewredispass0001@redis.internal:6379' });
+  assert.equal(r1.splits.length, 1);
+  opts.failServiceIds = [];
+  const { items: again } = await inventory([adapter]);
+  const r2 = await rotate(again, [adapter], { apply: true, dir, sel, provide: async () => null });
+  await fake.close();
+  assert.equal(r2.splits.length, 1, 'still split: nothing was written, and it says so');
+  assert.deepEqual(r2.skippedGroups.map(g => g.reason), ['no new value provided']);
+});

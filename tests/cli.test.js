@@ -116,3 +116,21 @@ test('dotenv end to end: rotate a generated secret in a local .env and print the
   assert.ok(!after.includes('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'));
   assert.match(r.stdout, /restart by hand \(web\): docker compose .* up -d --force-recreate web/);
 });
+
+test('AKH_NEW_<NAME> is refused when two groups carry the name (production and staging), and the per-environment form works', async () => {
+  const fake = await startFakeRailway();
+  const d = gitDir();
+  const LIVE = 'sk_live_LIVEKEYFORPR';
+  const amb = await cli(d, ['rotate', '--apply', '--yes', '--name', 'STRIPE_SECRET_KEY'], { ...envFor(fake), AKH_NEW_STRIPE_SECRET_KEY: LIVE });
+  const prod = () => fake.data.projects[0].vars['env-prod']['svc-web'].STRIPE_SECRET_KEY;
+  const stg = () => fake.data.projects[0].vars['env-stg']['svc-web'].STRIPE_SECRET_KEY;
+  assert.match(amb.all, /AKH_NEW_STRIPE_SECRET_KEY is ambiguous: 2 groups/);
+  assert.match(amb.all, /AKH_NEW_STRIPE_SECRET_KEY__PRODUCTION/);
+  assert.notEqual(prod(), LIVE); assert.notEqual(stg(), LIVE);
+  assert.equal(fake.calls.filter(c => c.op === 'upsert').length, 0, 'nothing was written');
+  const ok = await cli(d, ['rotate', '--apply', '--yes', '--name', 'STRIPE_SECRET_KEY'], { ...envFor(fake), AKH_NEW_STRIPE_SECRET_KEY__PRODUCTION: LIVE });
+  await fake.close();
+  assert.equal(prod(), LIVE, ok.all);
+  assert.ok(!stg().includes('LIVEKEY'), 'the live key never reaches staging');
+  assert.ok(!ok.all.includes(LIVE) && !amb.all.includes(LIVE));
+});
