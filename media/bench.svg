@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#0b0f14"/>
+  <text x="80" y="105" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="36" fill="#c9d4e0" font-weight="bold">Does it recognise real variable names?</text>
+  <text x="80" y="152" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="26" fill="#8899aa">3,182 names from the example env files of 77 popular repos. Labels written by hand before the run.</text>
+  <rect x="80" y="195" width="1440" height="560" rx="16" fill="#111821" stroke="#1f2a36" stroke-width="2"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+    <text x="130" y="262" font-size="26" fill="#8899aa">First run · 200 names · 36 secrets</text>
+    <text x="130" y="350" font-size="64" fill="#7ee787" font-weight="bold">91.7%</text><text x="130" y="388" font-size="24" fill="#c9d4e0">of secrets marked for rotation</text>
+    <text x="520" y="350" font-size="64" fill="#7ee787" font-weight="bold">100%</text><text x="520" y="388" font-size="24" fill="#c9d4e0">of marked names are secrets</text>
+    <text x="940" y="350" font-size="64" fill="#ffd166" font-weight="bold">87.9%</text><text x="940" y="388" font-size="24" fill="#c9d4e0">filed under the right category</text>
+    <line x1="130" y1="440" x2="1470" y2="440" stroke="#1f2a36" stroke-width="2"/>
+    <text x="130" y="492" font-size="26" fill="#8899aa">Unseen sample after the first fixes · 100 names · 18 secrets</text>
+    <text x="130" y="580" font-size="64" fill="#ffd166" font-weight="bold">88.9%</text><text x="130" y="618" font-size="24" fill="#c9d4e0">of secrets marked for rotation</text>
+    <text x="520" y="580" font-size="64" fill="#7ee787" font-weight="bold">100%</text><text x="520" y="618" font-size="24" fill="#c9d4e0">of marked names are secrets</text>
+    <text x="940" y="580" font-size="64" fill="#ff6b6b" font-weight="bold">50%</text><text x="940" y="618" font-size="24" fill="#c9d4e0">right category (the rest: "Other secret")</text>
+    <text x="130" y="700" font-size="22" fill="#6b7a8c">Small samples, labels written by the rules' author. The category misses were still marked P1 and rotated.</text>
+  </g>
+  <text x="80" y="850" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="24" fill="#6b7a8c">github.com/codegobrrrr9/apikeys-handler · method, labels and every miss in benchmarks/</text>
+</svg>

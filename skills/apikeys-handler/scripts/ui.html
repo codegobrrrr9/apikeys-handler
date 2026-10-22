@@ -26,8 +26,9 @@ main{padding:0 16px 80px;max-width:1200px;margin:0 auto}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:14px 0;overflow-x:auto}
 .card>h2{font-size:13px;margin:0;padding:10px 12px;display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
 .card>h2 .where{color:var(--muted);font-weight:400}
-table{width:100%;border-collapse:collapse}
-td{padding:6px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+table{width:100%;min-width:900px;border-collapse:collapse;table-layout:fixed}
+td{padding:6px 12px;border-bottom:1px solid var(--line);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+td:nth-child(1){width:36px}td:nth-child(2){width:58px}td:nth-child(3){width:170px}td:nth-child(5){width:150px}td:nth-child(6){width:210px}td:nth-child(7){width:96px}td:nth-child(8){width:78px}td:nth-child(9){width:110px}
 tr:last-child td{border-bottom:0}
 .name{font-family:ui-monospace,Consolas,monospace;font-size:13px}
 .badge{display:inline-block;min-width:28px;text-align:center;border-radius:4px;padding:0 6px;font-weight:600;font-size:12px;border:1px solid currentColor}

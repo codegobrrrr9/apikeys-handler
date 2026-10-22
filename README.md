@@ -61,6 +61,8 @@ Still yours to do: delete or revoke the OLD keys at each provider, and change da
 
 ### The dashboard
 
+![the dashboard on the demo project](media/dashboard.png)
+
 `apikeys-handler ui` opens a page on `127.0.0.1` (random port, one-time link, no outside requests): every service as a card, every variable with its priority, category and status, filters, "select all P0", one-click rotate with the warning for that key beside it, a hidden field for each key you have to create yourself, and an exportable report.
 
 ## How it decides
