@@ -12,9 +12,13 @@ Import every variable from Railway (or your `.env` and docker-compose files, Net
 
 </div>
 
-When a runtime is exploited, the standard advice is the same: patch, then rotate every secret the process could read. The **PHP2Shell** flaws (CVE-2026-109618 and CVE-2026-109619, disclosed around 21 October 2026) are the latest case: [Patchstack's alert](https://patchstack.com/articles/php-major-vulnerability-alert-10-2026/) says they can expose PHP worker memory, which holds passwords, tokens and API keys, and advises rotating the credentials on affected servers. Forty rotations across six services is the slow part. This tool keeps the inventory, the order and the progress.
+On 21 October 2026 Railway [disclosed](https://blog.railway.com/p/security-disclosure-wednesday-october-21st) that an unauthorized third party may have accessed customers' encrypted environment variables, and for some of them obtained the decrypted contents. Railway's advice to every customer: roll every environment variable stored in Railway, API keys, database credentials and private registry credentials included, and review the logs of those services. It paused deployments, brought builds back plan by plan over the following day ([status page](https://status.railway.com/incident/QH8L8B3E)), and invalidated all Railway API tokens, so anything that talks to Railway's API needs a new one.
 
-**This tool does not patch anything.** Update PHP (8.5.12, 8.4.27, 8.3.36 or 8.2.35 per that alert) or whatever was vulnerable first, or the new secrets leak the same way.
+"Roll everything" is services times variables times providers, and doing it by hand is the slow part. This tool keeps the inventory, the order and the progress, so you work down a list instead of through a dashboard.
+
+The same week, the **PHP2Shell** flaws (CVE-2026-109618 and CVE-2026-109619) landed, and [Patchstack's alert](https://patchstack.com/articles/php-major-vulnerability-alert-10-2026/) gives the same advice: they can expose PHP worker memory, which holds passwords, tokens and API keys, so rotate the credentials on affected servers.
+
+**This tool does not patch anything and cannot undo an exposure.** Update whatever was vulnerable first (for PHP, 8.5.12, 8.4.27, 8.3.36 or 8.2.35 per that alert), or the new secrets leak the same way. After Railway's incident, create a **new** Railway token (account tokens: railway.com/account/tokens): every token created before the incident is invalid.
 
 ## For your coding agent
 
@@ -77,7 +81,7 @@ Still yours to do: delete or revoke the OLD keys at each provider, and change da
 
 ## Does it work
 
-**Tests.** 49 run against a fake Railway server, temp git repos, and the real CLI and dashboard over HTTP. They cover, among others: no secret value ever appears in a result, a state file, a report, a CLI output or a dashboard response (including when a platform error echoes the request); a write never carries `replace`; a shared secret never ends up with different values in two services after a failed write (the rerun rewrites every member with one value, and says so loudly if it cannot); `AKH_NEW_<NAME>` is refused when production and staging both carry the name; references are never overwritten; one write per scope and one restart per service; resume after a failed restart; a wrong Host or Origin is refused. The three non-Railway platforms are tested against a fake only. See [`platforms.md`](skills/apikeys-handler/references/platforms.md) for what is and is not verified against a live service.
+**Tests.** 50 run against a fake Railway server, temp git repos, and the real CLI and dashboard over HTTP. They cover, among others: no secret value ever appears in a result, a state file, a report, a CLI output or a dashboard response (including when a platform error echoes the request); a write never carries `replace`; a shared secret never ends up with different values in two services after a failed write (the rerun rewrites every member with one value, and says so loudly if it cannot); `AKH_NEW_<NAME>` is refused when production and staging both carry the name; references are never overwritten; one write per scope and one restart per service; resume after a failed restart; a wrong Host or Origin is refused. The three non-Railway platforms are tested against a fake only. See [`platforms.md`](skills/apikeys-handler/references/platforms.md) for what is and is not verified against a live service.
 
 **Classifier benchmark** (names only, value unknown; method, labels and the order of events in [`method.md`](skills/apikeys-handler/references/method.md), numbers in [`benchmarks/`](benchmarks/)). Names come from the example env files of 77 popular public repos (3,182 unique names). I labelled 200 sampled names by hand before running the classifier:
 
@@ -126,7 +130,7 @@ Tokens come from your own environment, never from chat: `RAILWAY_API_TOKEN` (acc
 
 ## Credits
 
-Same family as [seatbelt](https://github.com/codegobrrrr9/seatbelt), [cheapskate](https://github.com/codegobrrrr9/cheapskate), [alibi](https://github.com/codegobrrrr9/alibi), [shortlist](https://github.com/codegobrrrr9/shortlist), [grudge](https://github.com/codegobrrrr9/grudge) and [tollgate](https://github.com/codegobrrrr9/tollgate). Rotation tools that already exist for narrower cases: [keyrotate](https://github.com/Prompto-Studio/keyrotate), [secret-rotator](https://github.com/othaime-en/secret-rotator); secret managers such as Infisical, Doppler and Vault do rotation as a product you adopt before an incident. This is the one you reach for during one.
+Railway's own [guide to rotating credentials without downtime](https://docs.railway.com/guides/rotate-credentials-zero-downtime) (overlap window, healthchecks, a second Postgres role) is the manual version of what this tool follows: write with deploys skipped, restart once, verify. Same family as [seatbelt](https://github.com/codegobrrrr9/seatbelt), [cheapskate](https://github.com/codegobrrrr9/cheapskate), [alibi](https://github.com/codegobrrrr9/alibi), [shortlist](https://github.com/codegobrrrr9/shortlist), [grudge](https://github.com/codegobrrrr9/grudge) and [tollgate](https://github.com/codegobrrrr9/tollgate). Rotation tools that already exist for narrower cases: [keyrotate](https://github.com/Prompto-Studio/keyrotate), [secret-rotator](https://github.com/othaime-en/secret-rotator); secret managers such as Infisical, Doppler and Vault do rotation as a product you adopt before an incident. This is the one you reach for during one.
 
 ## License
 

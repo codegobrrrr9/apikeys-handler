@@ -15,7 +15,7 @@ Every operation string is in one place (`OPS` in `railway.js` and `hosts.js`), s
 ## Live test (Railway), about ten minutes, in your own terminal
 
 1. Create a throwaway Railway project with two services and a handful of variables, including one `${{Service.VAR}}` reference.
-2. In your terminal (not in a chat): `$env:RAILWAY_API_TOKEN = "<an account token>"` (PowerShell) or
+2. Create a **new** token first: Railway invalidated every API token on 22 October 2026 after its security incident ([status page](https://status.railway.com/incident/QH8L8B3E)), and tokens created before it stay invalid. In your terminal (not in a chat): `$env:RAILWAY_API_TOKEN = "<an account token>"` (PowerShell) or
    `export RAILWAY_API_TOKEN=...`. For a project token use `RAILWAY_TOKEN`.
 3. `apikeys-handler scan --platform railway`, then `plan`, then `rotate --apply` on one generated secret.
 4. Check in the Railway dashboard that exactly that variable changed, the reference did not, and the service restarted once.

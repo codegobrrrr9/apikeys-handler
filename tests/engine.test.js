@@ -235,3 +235,19 @@ test('if the rerun has no new value for a split provider/manual group, the split
   assert.equal(r2.splits.length, 1, 'still split: nothing was written, and it says so');
   assert.deepEqual(r2.skippedGroups.map(g => g.reason), ['no new value provided']);
 });
+
+test('a Railway sealed variable (the API returns an empty value) is rotated by name and reported unverifiable, never skipped as empty', async () => {
+  clearSecrets();
+  const data = demoData();
+  const fake = await startFakeRailway({ data, sealedNames: ['OPENAI_API_KEY'] });   // the API returns an empty value for a sealed variable
+  const adapter = railwayAdapter({ token: 'demo', endpoint: fake.url, environment: 'production' });
+  const dir = dirOf();
+  const { items } = await inventory([adapter]);
+  const it = items.find(i => i.name === 'OPENAI_API_KEY');
+  assert.equal(it.unreadable, true); assert.equal(it.empty, false); assert.match(it.note, /sealed/);
+  const r = await rotate(items, [adapter], { apply: true, dir, sel: { names: ['OPENAI_API_KEY'] }, provide: async () => 'sk-proj-BRANDNEWOPENAIKEY0000000001' });
+  await fake.close();
+  assert.equal(r.failed.length, 0, JSON.stringify(r.failed));
+  assert.equal(data.projects[0].vars['env-prod']['svc-api'].OPENAI_API_KEY, 'sk-proj-BRANDNEWOPENAIKEY0000000001');
+  assert.equal(r.unverified.length, 1); assert.match(r.unverified[0].why, /does not return values/);
+});

@@ -23,13 +23,17 @@ export async function inventory(adapters, { exposed = [], rules = defaultRules()
     const raw = await a.list();
     for (const w of a.warnings || []) warnings.push(w);
     for (const r of raw) {
-      const known = typeof r.value === 'string';
-      const c = classify(r.name, known ? r.value : null, rules);
+      let known = typeof r.value === 'string';
+      let c = classify(r.name, known ? r.value : null, rules);
+      // Railway sealed variables cannot be read back: the API gives an empty value. An empty value under a secret-looking name on
+      // Railway is therefore treated as unreadable (rotated by name, unverifiable), never skipped as "empty".
+      let sealedLike = false;
+      if (known && r.value === '' && (r.platform || a.id) === 'railway' && c.how !== 'none') { sealedLike = true; known = false; c = classify(r.name, null, rules); c.note = 'empty or sealed: Railway does not return sealed values, so this is rotated by name and cannot be verified'; }
       // only secrets are scrubbed from output: registering "production" or "3000" would mangle every line that mentions them
       if (known && !c.derived && (c.how !== 'none' || c.category !== 'Config')) registerSecret(r.value);
       const item = {
         adapter: a.id, platform: r.platform || a.id, project: r.project, environment: r.environment, service: r.service ?? null,
-        shared: !!r.shared, name: r.name, scope: r.scope, value: known ? r.value : null, unreadable: !known,
+        shared: !!r.shared, name: r.name, scope: r.scope, value: known ? r.value : null, unreadable: !known, sealedLike,
         category: c.category, basePriority: c.priority, how: c.how, provider: c.provider, link: c.link, warn: c.warn, note: c.note || null,
         rule: c.rule, derived: c.derived, empty: c.empty, fp: c.derived ? null : fingerprint(known ? r.value : null),
         refs: c.derived || (known && /\$\{/.test(r.value)) ? referencesIn(r.value) : [], usedBy: [],

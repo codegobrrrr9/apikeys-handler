@@ -42,7 +42,7 @@ export function demoData() {
   };
 }
 
-// opts: {data, token, echoErrors, failServiceIds:[], rateLimitFirst}. Returns {url, close, calls, data}.
+// opts: {data, token, echoErrors, failServiceIds:[], rateLimitFirst, sealedNames:[]}. Returns {url, close, calls, data}.
 export function startFakeRailway(opts = {}) {
   const data = opts.data || demoData();
   const token = opts.token || 'demo';
@@ -71,7 +71,10 @@ export function startFakeRailway(opts = {}) {
         const p = proj(variables.projectId); const e = p?.vars[variables.environmentId];
         if (!e) return err('Environment not found');
         const bag = variables.serviceId ? e[variables.serviceId] : e.shared;
-        return bag ? send(200, { data: { variables: { ...bag } } }) : err('Service not found in environment');
+        if (!bag) return err('Service not found in environment');
+        const out = { ...bag };
+        for (const n of opts.sealedNames || []) if (n in out) out[n] = '';       // a sealed variable: the API never returns its value
+        return send(200, { data: { variables: out } });
       }
       if (/\bvariableCollectionUpsert\b/.test(query)) {
         const i = variables.input || {};
