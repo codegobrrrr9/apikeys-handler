@@ -1,0 +1,100 @@
+{"name":"ADMIN_BREAK_GLASS_ENABLED","secret":false}
+{"name":"AI_ANALYSIS_CONSENSUS_TIMEFRAMES","secret":false}
+{"name":"API_URL","secret":false}
+{"name":"APPSMITH_CLOUD_SERVICES_BASE_URL","secret":false}
+{"name":"APP_SHOW_DELETION_NOTICE","secret":false}
+{"name":"AUTH_BEARER_TOKEN_CLOUDFLARE","secret":true,"category":"Cloud & infra"}
+{"name":"AWS_WAF_SOLVER_URL","secret":false}
+{"name":"BEA_BASE_URL","secret":false}
+{"name":"BETTER_AUTH_API_KEY","secret":true,"category":"Auth & sessions"}
+{"name":"BRIGHTDATA_CUSTOMER","secret":false}
+{"name":"BROADCAST_CONNECTION","secret":false}
+{"name":"BROWSER_MODEL_HF_ENDPOINT","secret":false}
+{"name":"CALCOM_TELEMETRY_DISABLED","secret":false}
+{"name":"CELERY_CONCURRENCY","secret":false}
+{"name":"COGNEE_EMBEDDING_BATCH_CONCURRENCY","secret":false}
+{"name":"CONTACT_MAIL_ADDRESS","secret":false}
+{"name":"CONVERSATION_MONITORS_MODEL","secret":false}
+{"name":"COOKIE_DOMAIN","secret":false}
+{"name":"DATA_SOURCE_TIMEOUT","secret":false}
+{"name":"DB_PORT","secret":false}
+{"name":"DEEPGRAM_API_KEY","secret":true,"category":"AI & LLM"}
+{"name":"DEPLOY_D1_DATABASE_ID","secret":false}
+{"name":"DRAMACLAW_GATEWAY_VERSION","secret":false}
+{"name":"DUB_API_ENDPOINT","secret":false}
+{"name":"ELASTICSEARCH_PASSWORD","secret":true,"category":"Database"}
+{"name":"ELIZA_CLOUD_SANDBOX_API_BASE_URL","secret":false}
+{"name":"EMAIL_PROVIDER","secret":false}
+{"name":"ENABLE_REGISTRATION","secret":false}
+{"name":"ENABLE_SIDEKIQ_DEQUEUE_LOGGER","secret":false}
+{"name":"EXECUTION_FILL_SNAPSHOT_MIN_SEC","secret":false}
+{"name":"GIN_MODE","secret":false}
+{"name":"GITHUB_REDIRECT_URI","secret":false}
+{"name":"GITLAB_POSTGRES_USER","secret":false}
+{"name":"GOOGLE_API_CREDENTIALS","secret":true,"category":"Cloud & infra"}
+{"name":"GOOGLE_GENERATIVE_AI_API_KEY","secret":true,"category":"AI & LLM"}
+{"name":"GOTRUE_EXTERNAL_DISCORD_SECRET","secret":true,"category":"Auth & sessions"}
+{"name":"GOTRUE_EXTERNAL_FACEBOOK_SKIP_NONCE_CHECK","secret":false}
+{"name":"GOTRUE_EXTERNAL_FIGMA_CLIENT_ID","secret":false}
+{"name":"GOTRUE_MAILER_URLPATHS_CONFIRMATION","secret":false}
+{"name":"GOTRUE_SMS_PROVIDER","secret":false}
+{"name":"GRAV_USER_PATH","secret":false}
+{"name":"HERMES_MODEL_CONTEXT_LENGTH","secret":false}
+{"name":"HYPERLIQUID_PRIVATE_KEY","secret":true,"category":"Other secret"}
+{"name":"IDENTITY_PLANNER_APPEARANCE_MODEL","secret":false}
+{"name":"JAILBREAK_CLASSIFIER_MODEL","secret":false}
+{"name":"JEV_TIMEOUT_SECONDS","secret":false}
+{"name":"KAFKA_ORDER_PARTITIONS","secret":false}
+{"name":"KAFKA_STRATEGY_PARTITIONS","secret":false}
+{"name":"KEYCLOAK_POSTGRES_DB","secret":false}
+{"name":"LANGFUSE_MINIO_CONSOLE_PORT","secret":false}
+{"name":"LEON_LLAMACPP_API_KEY","secret":true,"category":"AI & LLM"}
+{"name":"MAIL_ENCRYPTION","secret":false}
+{"name":"MARKETPLACE_ENABLED","secret":false}
+{"name":"MATCH_ANALYSIS_MAX_LIST_ITEM_RUNES","secret":false}
+{"name":"MINERU_API_KEY","secret":true,"category":"Other secret"}
+{"name":"MINIMAX_API_KEY","secret":true,"category":"AI & LLM"}
+{"name":"MOBILE_HOST","secret":false}
+{"name":"MOONSHOT_URL","secret":false}
+{"name":"MOSAIC_SENSITIVE_INFO","secret":false}
+{"name":"N8N_AI_ANTHROPIC_KEY","secret":true,"category":"AI & LLM"}
+{"name":"N8N_AI_ENABLED","secret":false}
+{"name":"NEWAPI_IMAGE_EDIT_REFERENCE_FORMAT","secret":false}
+{"name":"NEWAPI_VIDEO_GENERATE_AUDIO","secret":false}
+{"name":"NEXTAUTH_SESSION_STRATEGY","secret":false}
+{"name":"NEXT_PUBLIC_BOOKER_NUMBER_OF_DAYS_TO_LOAD","secret":false}
+{"name":"NINJA_ENVIRONMENT","secret":false}
+{"name":"NUVEMSHOP_APP_ID","secret":false}
+{"name":"NX_BASE_API_URL","secret":false}
+{"name":"OAUTH_LINKEDIN_CLIENT_ID","secret":false}
+{"name":"OIDC_AUTH_SCOPES","secret":false}
+{"name":"OPENAI_KEY","secret":true,"category":"AI & LLM"}
+{"name":"OPENAPI_ENABLED","secret":false}
+{"name":"OPENROUTER_API_KEY","secret":true,"category":"AI & LLM"}
+{"name":"ORCAROUTER_API_KEY","secret":true,"category":"Other secret"}
+{"name":"POSTGRES_REPLICA_URL","secret":true,"category":"Database"}
+{"name":"POSTGRES_URL","secret":true,"category":"Database"}
+{"name":"PYCARET_JWT_SECRET","secret":true,"category":"Auth & sessions"}
+{"name":"RETELL_AI_TEST_EVENT_TYPE_MAP","secret":false}
+{"name":"REVERB_SCHEME","secret":false}
+{"name":"SANDBOX_DOCKER_USER_DATA_HOST_PATH","secret":false}
+{"name":"SANDBOX_MEM_LIMIT","secret":false}
+{"name":"SCOUT_MONITOR","secret":false}
+{"name":"SIDEKIQ_ALIVE_HOST","secret":false}
+{"name":"SITE_ADDRESS","secret":false}
+{"name":"SSH_KNOWN_HOSTS","secret":false}
+{"name":"STRATEGY_COMMAND_RETENTION_DAYS","secret":false}
+{"name":"STRATEGY_SCRIPT_CALLBACK_TIMEOUT_SEC","secret":false}
+{"name":"TELEGRAM_API_ID","secret":false}
+{"name":"TEST_LANE","secret":false}
+{"name":"TLS_KEY_FILE","secret":false}
+{"name":"TOOLJET_DB_USER","secret":false}
+{"name":"VALKEY_HNSW_EF_CONSTRUCTION","secret":false}
+{"name":"VIDEO_CODEC","secret":false}
+{"name":"VISION_TOKEN_PRICE","secret":false}
+{"name":"WATCHDOG_REDRIVE_BATCH_SIZE","secret":false}
+{"name":"WEBDAV_PATH_PREFIX","secret":false}
+{"name":"WEKNORA_AUDIT_RETENTION_DAYS","secret":false}
+{"name":"WEKNORA_REDIS_NAMESPACE","secret":false}
+{"name":"YUXI_ENV","secret":false}
+{"name":"YUXI_URL_WHITELIST","secret":false}
