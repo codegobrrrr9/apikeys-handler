@@ -1,0 +1,43 @@
+{
+ "tag": "holdout-tuned",
+ "labelsFile": "labels2.jsonl",
+ "names": 100,
+ "secrets": 18,
+ "marked": 17,
+ "recall": 94.4,
+ "precision": 100,
+ "weightedRecall": 95.8,
+ "categoryAccuracy": 88.2,
+ "truePositives": 17,
+ "falsePositives": 0,
+ "falseNegatives": 1,
+ "misses": [
+  {
+   "name": "AUTH_BEARER_TOKEN_CLOUDFLARE",
+   "labelled": "Cloud & infra",
+   "classifiedAs": "Config/P3",
+   "rule": "default"
+  }
+ ],
+ "falseAlarms": [],
+ "wrongCategory": [
+  {
+   "name": "BETTER_AUTH_API_KEY",
+   "labelled": "Auth & sessions",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  },
+  {
+   "name": "GOOGLE_API_CREDENTIALS",
+   "labelled": "Cloud & infra",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  }
+ ],
+ "howCounts": {
+  "generate": 0,
+  "provider": 8,
+  "manual": 9,
+  "none": 83
+ }
+}

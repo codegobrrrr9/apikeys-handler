@@ -1,0 +1,85 @@
+{
+ "tag": "holdout",
+ "labelsFile": "labels2.jsonl",
+ "names": 100,
+ "secrets": 18,
+ "marked": 16,
+ "recall": 88.9,
+ "precision": 100,
+ "weightedRecall": 91.7,
+ "categoryAccuracy": 50,
+ "truePositives": 16,
+ "falsePositives": 0,
+ "falseNegatives": 2,
+ "misses": [
+  {
+   "name": "AUTH_BEARER_TOKEN_CLOUDFLARE",
+   "labelled": "Cloud & infra",
+   "classifiedAs": "Config/P3",
+   "rule": "default"
+  },
+  {
+   "name": "N8N_AI_ANTHROPIC_KEY",
+   "labelled": "AI & LLM",
+   "classifiedAs": "Config/P3",
+   "rule": "default"
+  }
+ ],
+ "falseAlarms": [],
+ "wrongCategory": [
+  {
+   "name": "BETTER_AUTH_API_KEY",
+   "labelled": "Auth & sessions",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  },
+  {
+   "name": "ELASTICSEARCH_PASSWORD",
+   "labelled": "Database",
+   "classifiedAs": "Other secret",
+   "rule": "password"
+  },
+  {
+   "name": "GOOGLE_API_CREDENTIALS",
+   "labelled": "Cloud & infra",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  },
+  {
+   "name": "GOOGLE_GENERATIVE_AI_API_KEY",
+   "labelled": "AI & LLM",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  },
+  {
+   "name": "GOTRUE_EXTERNAL_DISCORD_SECRET",
+   "labelled": "Auth & sessions",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  },
+  {
+   "name": "LEON_LLAMACPP_API_KEY",
+   "labelled": "AI & LLM",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  },
+  {
+   "name": "MINIMAX_API_KEY",
+   "labelled": "AI & LLM",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  },
+  {
+   "name": "PYCARET_JWT_SECRET",
+   "labelled": "Auth & sessions",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  }
+ ],
+ "howCounts": {
+  "generate": 0,
+  "provider": 3,
+  "manual": 13,
+  "none": 84
+ }
+}

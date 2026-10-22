@@ -1,0 +1,23 @@
+{
+ "tag": "after-fixes-sample1",
+ "labelsFile": "labels.jsonl",
+ "names": 200,
+ "secrets": 36,
+ "marked": 36,
+ "recall": 100,
+ "precision": 100,
+ "weightedRecall": 100,
+ "categoryAccuracy": 100,
+ "truePositives": 36,
+ "falsePositives": 0,
+ "falseNegatives": 0,
+ "misses": [],
+ "falseAlarms": [],
+ "wrongCategory": [],
+ "howCounts": {
+  "generate": 0,
+  "provider": 18,
+  "manual": 18,
+  "none": 164
+ }
+}
