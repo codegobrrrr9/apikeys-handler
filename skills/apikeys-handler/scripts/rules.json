@@ -1,0 +1,100 @@
+{
+  "_comment": "Data, not code. Rules run in order against the UPPERCASED variable name; the first match wins. 'how' is generate (the app owns the secret, a random value is safe to write), provider (a third party issued it: create a new one there and paste it) or manual (rotating it needs a step this tool cannot do). Add your own rules with a .apikeys-handler.json file next to your project: {\"rules\":[...]}, they run first. Provider links are best effort.",
+  "categoryOrder": ["Database", "Auth & sessions", "Payments", "Cloud & infra", "Source & CI", "Webhooks & signing", "AI & LLM", "Email & SMS", "Other secret", "Monitoring & analytics", "Config"],
+  "providers": {
+    "Stripe": "https://dashboard.stripe.com/apikeys",
+    "PayPal": "https://developer.paypal.com/dashboard/applications",
+    "AWS": "https://console.aws.amazon.com/iam/home#/security_credentials",
+    "Google Cloud": "https://console.cloud.google.com/apis/credentials",
+    "Azure": "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+    "Cloudflare": "https://dash.cloudflare.com/profile/api-tokens",
+    "DigitalOcean": "https://cloud.digitalocean.com/account/api/tokens",
+    "Vercel": "https://vercel.com/account/tokens",
+    "Netlify": "https://app.netlify.com/user/applications#personal-access-tokens",
+    "Railway": "https://railway.com/account/tokens",
+    "Fly.io": "https://fly.io/user/personal_access_tokens",
+    "Heroku": "https://dashboard.heroku.com/account",
+    "Supabase": "https://supabase.com/dashboard/project/_/settings/api",
+    "GitHub": "https://github.com/settings/tokens",
+    "GitLab": "https://gitlab.com/-/user_settings/personal_access_tokens",
+    "npm": "https://www.npmjs.com/settings/~/tokens",
+    "PyPI": "https://pypi.org/manage/account/token/",
+    "Docker Hub": "https://hub.docker.com/settings/security",
+    "OpenAI": "https://platform.openai.com/api-keys",
+    "Anthropic": "https://console.anthropic.com/settings/keys",
+    "Google AI": "https://aistudio.google.com/apikey",
+    "Hugging Face": "https://huggingface.co/settings/tokens",
+    "Replicate": "https://replicate.com/account/api-tokens",
+    "Groq": "https://console.groq.com/keys",
+    "Mistral": "https://console.mistral.ai/api-keys",
+    "ElevenLabs": "https://elevenlabs.io/app/settings/api-keys",
+    "SendGrid": "https://app.sendgrid.com/settings/api_keys",
+    "Mailgun": "https://app.mailgun.com/settings/api_security",
+    "Postmark": "https://account.postmarkapp.com/servers",
+    "Resend": "https://resend.com/api-keys",
+    "Twilio": "https://console.twilio.com/",
+    "Sentry": "https://sentry.io/settings/account/api/auth-tokens/",
+    "Slack": "https://api.slack.com/apps",
+    "Discord": "https://discord.com/developers/applications",
+    "Clerk": "https://dashboard.clerk.com/",
+    "Auth0": "https://manage.auth0.com/",
+    "Firebase": "https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk"
+  },
+  "rules": [
+    { "id": "public-config", "re": "^(NEXT_PUBLIC|NUXT_PUBLIC|VITE|REACT_APP|EXPO_PUBLIC|PUBLIC|GATSBY|PLASMO_PUBLIC)_|(^|_)(PUBLISHABLE|PUBLIC|ANON)_?KEY$", "category": "Config", "priority": "P3", "how": "none", "warn": "Public by design (shipped to browsers). If it holds a real secret, it was exposed before this incident." },
+
+    { "id": "supabase-issued", "re": "^SUPABASE_(JWT_SECRET|SERVICE_ROLE_KEY|SERVICE_KEY)$", "category": "Auth & sessions", "priority": "P0", "how": "provider", "provider": "Supabase", "warn": "Issued by Supabase. Rotating the JWT secret signs every user out and invalidates the anon and service keys." },
+    { "id": "stripe-webhook", "re": "^STRIPE_[A-Z0-9_]*WEBHOOK[A-Z0-9_]*$", "category": "Payments", "priority": "P0", "how": "provider", "provider": "Stripe", "warn": "Issued by Stripe per endpoint. Roll it in the Stripe dashboard, then paste it. Never generated here: a made-up value would make every webhook fail verification." },
+    { "id": "webhook-secret", "re": "(^|_)WEBHOOKS?_?(SECRET|KEY|TOKEN|SIGNING[A-Z_]*)$|(^|_)SIGNING_SECRET$", "category": "Webhooks & signing", "priority": "P1", "how": "provider", "warn": "Usually issued by the sender. Regenerate it at the sender, then paste it. Never generated here." },
+
+    { "id": "app-key", "re": "^APP_KEY$", "category": "Auth & sessions", "priority": "P0", "how": "generate", "warn": "Existing sessions and anything encrypted with the old APP_KEY stop decrypting. Laravel can read the old key from APP_PREVIOUS_KEYS during the changeover; put the old value there yourself if you need that." },
+    { "id": "session-secret", "re": "^(JWT_SECRET|JWT_SIGNING_KEY|SESSION_SECRET|SESSION_KEY|COOKIE_SECRET|SECRET_KEY|SECRET_KEY_BASE|NEXTAUTH_SECRET|AUTH_SECRET|BETTER_AUTH_SECRET|APP_SECRET)$", "category": "Auth & sessions", "priority": "P0", "how": "generate", "warn": "Every signed-in user is signed out and every outstanding token stops working." },
+    { "id": "encryption-key", "re": "(ENCRYPTION|CRYPTO|CIPHER|MASTER|HMAC|PEPPER|SALT)[A-Z0-9_]*(KEY|SECRET)$|^(ENCRYPTION_KEY|MASTER_KEY|KEK|DEK)$", "category": "Auth & sessions", "priority": "P0", "how": "manual", "warn": "Data encrypted with the old key becomes unreadable if you just swap it. Keep the old key to decrypt, re-encrypt with the new one, then retire the old one. Never generated here." },
+    { "id": "oauth-client-secret", "re": "(^|_)CLIENT_SECRET$|^(AUTH0|OKTA|CLERK|KEYCLOAK|COGNITO)_[A-Z0-9_]*(SECRET|TOKEN|KEY)$", "category": "Auth & sessions", "priority": "P0", "how": "provider", "warn": "Issued by your identity provider. Create a new client secret there, then paste it." },
+    { "id": "firebase-admin", "re": "^(FIREBASE|GOOGLE_SERVICE_ACCOUNT|GCP|GOOGLE_APPLICATION)_[A-Z0-9_]*(KEY|CREDENTIALS|PRIVATE_KEY|JSON)$|^GOOGLE_APPLICATION_CREDENTIALS$", "category": "Cloud & infra", "priority": "P0", "how": "provider", "provider": "Firebase", "warn": "A service-account key. Create a new key, deploy with it, then delete the old key in the console." },
+
+    { "id": "db-password", "re": "(^|_)(POSTGRES(QL)?|PG|MYSQL|MARIADB|MONGO(DB)?|REDIS|DB|DATABASE|CLICKHOUSE|MSSQL)[A-Z0-9_]*(PASSWORD|PASSWD|PASS|PWD)$|^(PGPASSWORD|MYSQL_ROOT_PASSWORD)$", "category": "Database", "priority": "P0", "how": "manual", "warn": "Changing this variable does not change the real database password. Change it in the database first (ALTER USER or the provider's reset), then paste the same value here." },
+    { "id": "db-url", "re": "(^|_)(DATABASE|DB|POSTGRES(QL)?|PG|MYSQL|MARIADB|MONGO(DB)?|REDIS|CLICKHOUSE|MSSQL|NEON|PLANETSCALE|TURSO|UPSTASH|SUPABASE_DB|COCKROACH)[A-Z0-9_]*(URL|URI|DSN|CONNECTION_STRING|CONN_STRING|TOKEN)$|^(DB_CONNECTION_STRING|DB_URL)$", "category": "Database", "priority": "P0", "how": "manual", "requireValue": "://[^/\\s:@]+:[^@\\s]+@|token|password", "warn": "The password inside this URL is the database's. Change it in the database first, then paste the new URL. Services that build it from ${{Postgres.PASSWORD}}-style references update with the source." },
+
+    { "id": "stripe", "re": "^STRIPE_[A-Z0-9_]*(SECRET|KEY|TOKEN)$", "category": "Payments", "priority": "P0", "how": "provider", "provider": "Stripe", "warn": "Roll the key in the Stripe dashboard (it can keep the old one alive for a set time), then paste the new one." },
+    { "id": "payments", "re": "^(PAYPAL|PADDLE|LEMON[A-Z]*|SQUARE|ADYEN|RAZORPAY|BRAINTREE|MOLLIE|PAYSTACK|FLUTTERWAVE|CHARGEBEE|RECURLY)_[A-Z0-9_]*(SECRET|KEY|TOKEN|PASSWORD)$", "category": "Payments", "priority": "P0", "how": "provider", "provider": "PayPal" },
+
+    { "id": "aws", "re": "^(AWS_(ACCESS_KEY_ID|SECRET_ACCESS_KEY|SESSION_TOKEN)|S3_[A-Z0-9_]*(SECRET|ACCESS_KEY)[A-Z0-9_]*|R2_[A-Z0-9_]*(SECRET|ACCESS_KEY)[A-Z0-9_]*|SPACES_[A-Z0-9_]*(SECRET|ACCESS_KEY)[A-Z0-9_]*)$", "category": "Cloud & infra", "priority": "P0", "how": "provider", "provider": "AWS", "warn": "Access key id and secret are a pair: create a new pair, deploy, then deactivate and delete the old one." },
+    { "id": "cloudflare", "re": "^(CLOUDFLARE|CF)_[A-Z0-9_]*(TOKEN|KEY|SECRET)$", "category": "Cloud & infra", "priority": "P0", "how": "provider", "provider": "Cloudflare" },
+    { "id": "azure", "re": "^AZURE_[A-Z0-9_]*(SECRET|KEY|PASSWORD|TOKEN|CONNECTION_STRING)$", "category": "Cloud & infra", "priority": "P0", "how": "provider", "provider": "Azure" },
+    { "id": "digitalocean", "re": "^(DIGITALOCEAN|DO)_[A-Z0-9_]*(TOKEN|KEY|SECRET)$", "category": "Cloud & infra", "priority": "P0", "how": "provider", "provider": "DigitalOcean" },
+    { "id": "host-tokens", "re": "^(VERCEL|NETLIFY|RAILWAY|FLY|HEROKU|RENDER|LINODE|HETZNER|SCALEWAY)_[A-Z0-9_]*(TOKEN|KEY|SECRET)$|^NETLIFY_AUTH_TOKEN$", "category": "Cloud & infra", "priority": "P0", "how": "provider", "warn": "A platform token can deploy and read every variable you are rotating. Rotate it first." },
+
+    { "id": "publish-tokens", "re": "(^|_)(NPM|PYPI|GITHUB|GH|GITLAB|DOCKER(HUB)?|CARGO|RUBYGEMS)_[A-Z0-9_]*(TOKEN|PASSWORD|PAT|KEY)$|^(NPM_TOKEN|NODE_AUTH_TOKEN)$", "category": "Source & CI", "priority": "P0", "how": "provider", "warn": "Can push code or publish packages as you. Revoke the old token after the new one is in place." },
+    { "id": "ci-tokens", "re": "^(BITBUCKET|CIRCLECI|TRAVIS|CODECOV|SONAR|SNYK|TERRAFORM|TF|BUILDKITE|SENTRY_AUTH)[A-Z0-9_]*(TOKEN|KEY|SECRET|PASSWORD)$", "category": "Source & CI", "priority": "P1", "how": "provider" },
+
+    { "id": "ai", "re": "^(OPENAI|ANTHROPIC|CLAUDE|GEMINI|GOOGLE_AI|GROQ|MISTRAL|COHERE|REPLICATE|HUGGING_?FACE|HF|TOGETHER|OPENROUTER|PERPLEXITY|DEEPSEEK|XAI|ELEVENLABS|PINECONE|WEAVIATE|LANGSMITH|LANGCHAIN|FIREWORKS|ASSEMBLYAI|DEEPGRAM|STABILITY|FAL)[A-Z0-9_]*(KEY|TOKEN|SECRET)$", "category": "AI & LLM", "priority": "P1", "how": "provider", "warn": "A leaked key spends your money. Create a new key, deploy, then delete the old one." },
+
+    { "id": "email-sms", "re": "^(SENDGRID|MAILGUN|POSTMARK|RESEND|MAILCHIMP|MANDRILL|SES|SMTP|MAIL|EMAIL|TWILIO|VONAGE|NEXMO|MESSAGEBIRD|PLIVO|SENDINBLUE|BREVO|LOOPS|CUSTOMERIO|KLAVIYO|TELNYX)[A-Z0-9_]*(KEY|TOKEN|SECRET|PASSWORD|PASS|PWD)$", "category": "Email & SMS", "priority": "P1", "how": "provider", "warn": "Lets an attacker send mail or texts as you." },
+
+    { "id": "monitoring", "re": "^(SENTRY|DATADOG|DD|NEW_?RELIC|LOGROCKET|ROLLBAR|BUGSNAG|POSTHOG|MIXPANEL|SEGMENT|AMPLITUDE|HONEYCOMB|GRAFANA|LOGTAIL|BETTERSTACK|AXIOM|HOTJAR)[A-Z0-9_]*(KEY|TOKEN|SECRET|DSN)$", "category": "Monitoring & analytics", "priority": "P2", "how": "provider" },
+
+    { "id": "messaging-bots", "re": "^(SLACK|DISCORD|TELEGRAM|LINE|WHATSAPP|TEAMS)_[A-Z0-9_]*(TOKEN|SECRET|KEY|WEBHOOK_URL)$", "category": "Other secret", "priority": "P1", "how": "provider" },
+    { "id": "password", "re": "(^|_)(PASSWORD|PASSWD|PWD|PASS)$", "category": "Other secret", "priority": "P1", "how": "manual", "warn": "A password for something this tool cannot see. Change it where it is issued, then paste the new one." },
+    { "id": "generic-secret", "re": "(SECRET|TOKEN|API_?KEY|ACCESS_?KEY|PRIVATE_?KEY|CREDENTIALS?|AUTH_?KEY|BEARER|LICENSE_?KEY)$", "category": "Other secret", "priority": "P1", "how": "manual", "warn": "Looks like a secret but matches no known provider. Find where it is issued, create a new one, then paste it." }
+  ],
+  "defaults": { "category": "Config", "priority": "P3", "how": "none" },
+  "shapes": [
+    { "id": "stripe-live", "re": "^(sk|rk)_live_[A-Za-z0-9]{10,}", "category": "Payments", "priority": "P0", "provider": "Stripe" },
+    { "id": "stripe-test", "re": "^(sk|rk)_test_[A-Za-z0-9]{10,}", "category": "Payments", "priority": "P2", "provider": "Stripe", "warn": "A test-mode key: no real money, but rotate it if the account is shared." },
+    { "id": "stripe-whsec", "re": "^whsec_[A-Za-z0-9+/=]{10,}", "category": "Payments", "priority": "P0", "provider": "Stripe" },
+    { "id": "anthropic", "re": "^sk-ant-[A-Za-z0-9_-]{20,}", "category": "AI & LLM", "priority": "P1", "provider": "Anthropic" },
+    { "id": "openai", "re": "^sk-(proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}", "category": "AI & LLM", "priority": "P1", "provider": "OpenAI" },
+    { "id": "github", "re": "^(gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,})", "category": "Source & CI", "priority": "P0", "provider": "GitHub" },
+    { "id": "gitlab", "re": "^glpat-[A-Za-z0-9_-]{15,}", "category": "Source & CI", "priority": "P0", "provider": "GitLab" },
+    { "id": "npm", "re": "^npm_[A-Za-z0-9]{30,}", "category": "Source & CI", "priority": "P0", "provider": "npm" },
+    { "id": "aws-key", "re": "^(AKIA|ASIA)[0-9A-Z]{16}$", "category": "Cloud & infra", "priority": "P0", "provider": "AWS" },
+    { "id": "google-api", "re": "^AIza[0-9A-Za-z_-]{35}$", "category": "Cloud & infra", "priority": "P1", "provider": "Google Cloud" },
+    { "id": "sendgrid", "re": "^SG\\.[A-Za-z0-9_-]{16,}\\.[A-Za-z0-9_-]{16,}", "category": "Email & SMS", "priority": "P1", "provider": "SendGrid" },
+    { "id": "slack", "re": "^xox[baprs]-[A-Za-z0-9-]{10,}", "category": "Other secret", "priority": "P1", "provider": "Slack" },
+    { "id": "huggingface", "re": "^hf_[A-Za-z0-9]{20,}", "category": "AI & LLM", "priority": "P1", "provider": "Hugging Face" },
+    { "id": "private-key", "re": "-----BEGIN [A-Z ]*PRIVATE KEY-----", "category": "Cloud & infra", "priority": "P0", "provider": null },
+    { "id": "db-uri-creds", "re": "^(postgres(ql)?|mysql|mariadb|mongodb(\\+srv)?|rediss?|amqps?)://[^/\\s:@]*:[^@\\s]+@", "category": "Database", "priority": "P0", "provider": null, "how": "manual" },
+    { "id": "jwt", "re": "^eyJ[A-Za-z0-9_-]{8,}\\.eyJ[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,}$", "category": "Auth & sessions", "priority": "P1", "provider": null }
+  ]
+}
