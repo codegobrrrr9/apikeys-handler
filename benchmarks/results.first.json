@@ -1,0 +1,67 @@
+{
+ "tag": "first",
+ "labelsFile": "labels.jsonl",
+ "names": 200,
+ "secrets": 36,
+ "marked": 33,
+ "recall": 91.7,
+ "precision": 100,
+ "weightedRecall": 93.3,
+ "categoryAccuracy": 87.9,
+ "truePositives": 33,
+ "falsePositives": 0,
+ "falseNegatives": 3,
+ "misses": [
+  {
+   "name": "FEISHU_PUSH_MIRROR_WEBHOOK_URL",
+   "labelled": "Webhooks & signing",
+   "classifiedAs": "Config/P3",
+   "rule": "default"
+  },
+  {
+   "name": "GOOGLE_WEBHOOK_URL",
+   "labelled": "Webhooks & signing",
+   "classifiedAs": "Config/P3",
+   "rule": "default"
+  },
+  {
+   "name": "SERPAPI_KEYS",
+   "labelled": "Other secret",
+   "classifiedAs": "Config/P3",
+   "rule": "default"
+  }
+ ],
+ "falseAlarms": [],
+ "wrongCategory": [
+  {
+   "name": "CRYPTOQUANT_API_KEY",
+   "labelled": "Other secret",
+   "classifiedAs": "Auth & sessions",
+   "rule": "encryption-key"
+  },
+  {
+   "name": "GOOGLE_OAUTH_REFRESH_TOKEN",
+   "labelled": "Auth & sessions",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  },
+  {
+   "name": "IMAP_PASSWORD",
+   "labelled": "Email & SMS",
+   "classifiedAs": "Other secret",
+   "rule": "password"
+  },
+  {
+   "name": "TWITTER_CONSUMER_SECRET",
+   "labelled": "Auth & sessions",
+   "classifiedAs": "Other secret",
+   "rule": "generic-secret"
+  }
+ ],
+ "howCounts": {
+  "generate": 0,
+  "provider": 13,
+  "manual": 20,
+  "none": 167
+ }
+}

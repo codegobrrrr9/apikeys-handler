@@ -134,3 +134,14 @@ test('credentialOf finds the password in a connection URL and nothing else', asy
   assert.equal(credentialOf('plain-value'), null);
   assert.equal(credentialOf(null), null);
 });
+
+test('rules added after the first benchmark run: CRYPTO prefix, webhook URLs, plural keys, IMAP, consumer secret, refresh token', () => {
+  const t = (n, cat, how) => { const c = classify(n, null); assert.deepEqual([c.category, c.how].join('/'), [cat, how].join('/'), `${n} -> ${c.category}/${c.how} via ${c.rule}`); };
+  t('CRYPTOQUANT_API_KEY', 'Other secret', 'manual');
+  t('CRYPTO_KEY', 'Auth & sessions', 'manual');
+  t('GOOGLE_WEBHOOK_URL', 'Webhooks & signing', 'provider');
+  t('SERPAPI_KEYS', 'Other secret', 'manual');
+  t('IMAP_PASSWORD', 'Email & SMS', 'provider');
+  t('TWITTER_CONSUMER_SECRET', 'Auth & sessions', 'provider');
+  t('GOOGLE_OAUTH_REFRESH_TOKEN', 'Auth & sessions', 'provider');
+});
