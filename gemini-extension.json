@@ -1,0 +1,6 @@
+{
+  "name": "apikeys-handler",
+  "version": "0.1.0",
+  "description": "Rotate every API key and secret after a breach, in priority order, without the model seeing a value.",
+  "contextFileName": "AGENTS.md"
+}

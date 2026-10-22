@@ -1,0 +1,420 @@
+{
+ "collectedAt": "2026-10-22T19:48:41.541Z",
+ "topics": [
+  "nextjs",
+  "laravel",
+  "django",
+  "express",
+  "nestjs",
+  "fastapi",
+  "rails",
+  "supabase",
+  "saas",
+  "discord-bot",
+  "telegram-bot",
+  "chatbot",
+  "self-hosted",
+  "docker-compose",
+  "wordpress",
+  "symfony",
+  "strapi",
+  "directus",
+  "nuxt",
+  "sveltekit"
+ ],
+ "files": [
+  ".env.example",
+  ".env.sample",
+  ".env.template",
+  ".env.local.example",
+  "example.env",
+  ".env.dist"
+ ],
+ "repos": [
+  {
+   "name": "n8n-io/n8n",
+   "stars": 208343,
+   "variables": 10
+  },
+  {
+   "name": "f/prompts.chat",
+   "stars": 173977,
+   "variables": 66
+  },
+  {
+   "name": "open-webui/open-webui",
+   "stars": 156470,
+   "variables": 28
+  },
+  {
+   "name": "ChatGPTNextWeb/NextChat",
+   "stars": 88884,
+   "variables": 45
+  },
+  {
+   "name": "laravel/laravel",
+   "stars": 85247,
+   "variables": 51
+  },
+  {
+   "name": "headroomlabs-ai/headroom",
+   "stars": 77540,
+   "variables": 4
+  },
+  {
+   "name": "xtekky/gpt4free",
+   "stars": 66923,
+   "variables": 35
+  },
+  {
+   "name": "makeplane/plane",
+   "stars": 61302,
+   "variables": 31
+  },
+  {
+   "name": "calcom/cal.diy",
+   "stars": 49206,
+   "variables": 182
+  },
+  {
+   "name": "payloadcms/payload",
+   "stars": 45426,
+   "variables": 5
+  },
+  {
+   "name": "reactive-resume/reactive-resume",
+   "stars": 44713,
+   "variables": 71
+  },
+  {
+   "name": "ToolJet/ToolJet",
+   "stars": 41116,
+   "variables": 86
+  },
+  {
+   "name": "appsmithorg/appsmith",
+   "stars": 41105,
+   "variables": 26
+  },
+  {
+   "name": "photoprism/photoprism",
+   "stars": 40344,
+   "variables": 12
+  },
+  {
+   "name": "chatwoot/chatwoot",
+   "stars": 38096,
+   "variables": 132
+  },
+  {
+   "name": "gitroomhq/postiz-app",
+   "stars": 37588,
+   "variables": 124
+  },
+  {
+   "name": "Tencent/WeKnora",
+   "stars": 35077,
+   "variables": 347
+  },
+  {
+   "name": "karakeep-app/karakeep",
+   "stars": 29894,
+   "variables": 2
+  },
+  {
+   "name": "bagisto/bagisto",
+   "stars": 28267,
+   "variables": 84
+  },
+  {
+   "name": "Cinnamon/kotaemon",
+   "stars": 25824,
+   "variables": 29
+  },
+  {
+   "name": "monicahq/monica",
+   "stars": 25516,
+   "variables": 53
+  },
+  {
+   "name": "krayin/laravel-crm",
+   "stars": 24044,
+   "variables": 66
+  },
+  {
+   "name": "Evil0ctal/Douyin_TikTok_Download_API",
+   "stars": 20847,
+   "variables": 33
+  },
+  {
+   "name": "elizaOS/eliza",
+   "stars": 19638,
+   "variables": 56
+  },
+  {
+   "name": "BookStackApp/BookStack",
+   "stars": 19093,
+   "variables": 15
+  },
+  {
+   "name": "leon-ai/leon",
+   "stars": 17597,
+   "variables": 15
+  },
+  {
+   "name": "koel/koel",
+   "stars": 17298,
+   "variables": 116
+  },
+  {
+   "name": "VERT-sh/VERT",
+   "stars": 16070,
+   "variables": 8
+  },
+  {
+   "name": "getgrav/grav",
+   "stars": 15692,
+   "variables": 9
+  },
+  {
+   "name": "cachethq/cachet",
+   "stars": 15262,
+   "variables": 57
+  },
+  {
+   "name": "Sairyss/domain-driven-hexagon",
+   "stars": 14992,
+   "variables": 5
+  },
+  {
+   "name": "OpenByteInc/QuantDinger",
+   "stars": 13027,
+   "variables": 435
+  },
+  {
+   "name": "laradock/laradock",
+   "stars": 12681,
+   "variables": 41
+  },
+  {
+   "name": "aureuserp/aureuserp",
+   "stars": 12098,
+   "variables": 57
+  },
+  {
+   "name": "linnovate/mean",
+   "stars": 12043,
+   "variables": 5
+  },
+  {
+   "name": "octobercms/october",
+   "stars": 11147,
+   "variables": 43
+  },
+  {
+   "name": "unopim/unopim",
+   "stars": 11044,
+   "variables": 66
+  },
+  {
+   "name": "invoiceninja/invoiceninja",
+   "stars": 10310,
+   "variables": 61
+  },
+  {
+   "name": "pycaret/pycaret",
+   "stars": 9858,
+   "variables": 18
+  },
+  {
+   "name": "ghostfolio/ghostfolio",
+   "stars": 9558,
+   "variables": 10
+  },
+  {
+   "name": "codebymitch/TitanBot",
+   "stars": 9135,
+   "variables": 43
+  },
+  {
+   "name": "TandoorRecipes/recipes",
+   "stars": 8680,
+   "variables": 9
+  },
+  {
+   "name": "KKKKhazix/AIHOT",
+   "stars": 8426,
+   "variables": 64
+  },
+  {
+   "name": "getarcaneapp/arcane",
+   "stars": 8020,
+   "variables": 35
+  },
+  {
+   "name": "hagopj13/node-express-boilerplate",
+   "stars": 7668,
+   "variables": 12
+  },
+  {
+   "name": "xerrors/Yuxi",
+   "stars": 7459,
+   "variables": 84
+  },
+  {
+   "name": "miantiao-me/Sink",
+   "stars": 7230,
+   "variables": 35
+  },
+  {
+   "name": "roots/bedrock",
+   "stars": 6580,
+   "variables": 18
+  },
+  {
+   "name": "thedevdojo/wave",
+   "stars": 6551,
+   "variables": 66
+  },
+  {
+   "name": "dramaclaw/dramaclaw",
+   "stars": 6407,
+   "variables": 135
+  },
+  {
+   "name": "shy3130/tick-stock-panel",
+   "stars": 6227,
+   "variables": 12
+  },
+  {
+   "name": "srizzon/git-city",
+   "stars": 5865,
+   "variables": 22
+  },
+  {
+   "name": "santiq/bulletproof-nodejs",
+   "stars": 5772,
+   "variables": 8
+  },
+  {
+   "name": "bookorbit/bookorbit",
+   "stars": 5589,
+   "variables": 37
+  },
+  {
+   "name": "kimai/kimai",
+   "stars": 5090,
+   "variables": 9
+  },
+  {
+   "name": "boxyhq/saas-starter-kit",
+   "stars": 4957,
+   "variables": 60
+  },
+  {
+   "name": "melgarafael/DeskcommCRM",
+   "stars": 4800,
+   "variables": 144
+  },
+  {
+   "name": "dimthink/PriceAI",
+   "stars": 4400,
+   "variables": 68
+  },
+  {
+   "name": "groupultra/telegram-search",
+   "stars": 4130,
+   "variables": 21
+  },
+  {
+   "name": "seanmorley15/AdventureLog",
+   "stars": 3826,
+   "variables": 41
+  },
+  {
+   "name": "nextlevelbuilder/goclaw",
+   "stars": 3665,
+   "variables": 11
+  },
+  {
+   "name": "npmx-dev/npmx.dev",
+   "stars": 3646,
+   "variables": 2
+  },
+  {
+   "name": "growchief/growchief",
+   "stars": 3494,
+   "variables": 26
+  },
+  {
+   "name": "n3d1117/chatgpt-telegram-bot",
+   "stars": 3459,
+   "variables": 48
+  },
+  {
+   "name": "SimpleHomelab/Docker-Traefik",
+   "stars": 3445,
+   "variables": 21
+  },
+  {
+   "name": "luolongfei/freenom",
+   "stars": 3331,
+   "variables": 50
+  },
+  {
+   "name": "Smaug6739/Alexandrie",
+   "stars": 3324,
+   "variables": 33
+  },
+  {
+   "name": "pezzolabs/pezzo",
+   "stars": 3280,
+   "variables": 11
+  },
+  {
+   "name": "pluja/whishper",
+   "stars": 3093,
+   "variables": 5
+  },
+  {
+   "name": "strelov1/freehire",
+   "stars": 2787,
+   "variables": 58
+  },
+  {
+   "name": "crbnos/carbon",
+   "stars": 2756,
+   "variables": 46
+  },
+  {
+   "name": "Zero6992/chatGPT-discord-bot",
+   "stars": 2734,
+   "variables": 7
+  },
+  {
+   "name": "ArnasDon/wacrm",
+   "stars": 2598,
+   "variables": 14
+  },
+  {
+   "name": "supabase/auth",
+   "stars": 2584,
+   "variables": 198
+  },
+  {
+   "name": "modmail-dev/Modmail",
+   "stars": 1696,
+   "variables": 6
+  },
+  {
+   "name": "stegripe/rawon",
+   "stars": 1529,
+   "variables": 13
+  },
+  {
+   "name": "directus-labs/agency-os",
+   "stars": 983,
+   "variables": 6
+  }
+ ]
+}

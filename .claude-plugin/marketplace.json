@@ -1,0 +1,18 @@
+{
+  "name": "apikeys-handler",
+  "owner": { "name": "codegobrrrr9", "url": "https://github.com/codegobrrrr9" },
+  "metadata": { "description": "Rotate every API key and secret after a breach, in order.", "version": "0.1.0" },
+  "plugins": [
+    {
+      "name": "apikeys-handler",
+      "source": "./",
+      "description": "Imports every variable from Railway or .env files, sorts them by service, category and priority, rotates them in order and restarts each service once. The model never sees a value. Adds /apikeys-handler.",
+      "version": "0.1.0",
+      "author": { "name": "codegobrrrr9" },
+      "homepage": "https://github.com/codegobrrrr9/apikeys-handler",
+      "license": "MIT",
+      "keywords": ["secrets", "key-rotation", "incident-response"],
+      "category": "security"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "apikeys-handler",
+  "version": "0.1.0",
+  "description": "Rotate every API key and secret after a breach, in priority order, without the model seeing a value. Railway, .env and docker-compose, Netlify, Cloudflare, Supabase.",
+  "author": { "name": "codegobrrrr9", "url": "https://github.com/codegobrrrr9" },
+  "homepage": "https://github.com/codegobrrrr9/apikeys-handler",
+  "repository": "https://github.com/codegobrrrr9/apikeys-handler",
+  "license": "MIT",
+  "keywords": ["secrets", "key-rotation", "incident-response", "railway", "claude-code"]
+}

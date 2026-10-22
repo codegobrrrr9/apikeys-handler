@@ -1,0 +1,200 @@
+{"name":"ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY","secret":true,"category":"Auth & sessions"}
+{"name":"ADMIN_MAIL_NAME","secret":false}
+{"name":"ADMIN_USER_IDS","secret":false}
+{"name":"AI_ENSEMBLE_MODELS","secret":false}
+{"name":"AI_FUNDAMENTAL_DB_TTL_SEC","secret":false}
+{"name":"ALLOW_LOCAL_DESKTOP_BROKERS","secret":false}
+{"name":"ALPHA_VANTAGE_TIMEOUT","secret":false}
+{"name":"ANDROID_BUNDLE_ID","secret":false}
+{"name":"ANTHROPIC_API_KEY","secret":true,"category":"AI & LLM"}
+{"name":"ANTHROPIC_URL","secret":false}
+{"name":"API_EXTERNAL_URL","secret":false}
+{"name":"API_REDIS_MAX_CONNECTIONS","secret":false}
+{"name":"APPSMITH_DISABLE_PYLON","secret":false}
+{"name":"APPSMITH_MAIL_HOST","secret":false}
+{"name":"APPSMITH_OAUTH2_GOOGLE_CLIENT_SECRET","secret":true,"category":"Auth & sessions"}
+{"name":"APPSMITH_RECAPTCHA_SITE_KEY","secret":false}
+{"name":"APP_ACCENT_HEX","secret":false}
+{"name":"APP_PORT","secret":false}
+{"name":"APT_MIRROR","secret":false}
+{"name":"AUTH_OAUTH_SCOPE","secret":false}
+{"name":"AUTH_OAUTH_TOKEN_AUTH_METHOD","secret":false}
+{"name":"AUTH_OIDC_LOGO","secret":false}
+{"name":"AZURE_OPENAI_ENDPOINT","secret":false}
+{"name":"BACKEND_TAG","secret":false}
+{"name":"BACKEND_URI","secret":false}
+{"name":"BLS_API_KEY","secret":true,"category":"Other secret"}
+{"name":"BRAINCLAW_CONTROL_CONTEXT_KEYRING_FILE","secret":false}
+{"name":"BRAND_SOCIAL_GITHUB","secret":false}
+{"name":"CACHET_AUTO_TWITTER","secret":false}
+{"name":"CELERY_TASKS_ENABLED","secret":false}
+{"name":"COMPACTION_MODEL","secret":false}
+{"name":"COMPOSE_NETWORK_NAME","secret":false}
+{"name":"CONFIG_DISABLE_SIGNUP","secret":false}
+{"name":"CONFIG_PATH","secret":false}
+{"name":"CONTAINER_LOG_MAX_FILES","secret":false}
+{"name":"CRYPTOQUANT_API_KEY","secret":true,"category":"Other secret"}
+{"name":"CUSTOM_API_KEY","secret":true,"category":"Other secret"}
+{"name":"DATADIR2","secret":false}
+{"name":"DATA_SOURCE_RETRY_BACKOFF","secret":false}
+{"name":"DB_DRIVER","secret":false}
+{"name":"DB_USER","secret":false}
+{"name":"DB_USERNAME","secret":false}
+{"name":"DEFAULT_FILE_MASK","secret":false}
+{"name":"DEFAULT_VIDEO_MODEL","secret":false}
+{"name":"DISABLE_FAST_LINK","secret":false}
+{"name":"DISCORD_CLIENT_ID","secret":false}
+{"name":"DJANGO_ADMIN_EMAIL","secret":false}
+{"name":"DOCREADER_PREPROCESS_MEMORY_MB","secret":false}
+{"name":"DO_NOT_TRACK","secret":false}
+{"name":"DTK_DOWNLOADER_IMAGE","secret":false}
+{"name":"DTK_REDIS_URL","secret":true,"category":"Database"}
+{"name":"ELIZA_CLOUD_SANDBOX_TOKEN","secret":true,"category":"Other secret"}
+{"name":"ELIZA_SANDBOX_AGENT_RUNNERS","secret":false}
+{"name":"ENABLE_ASYNC_TASKER","secret":false}
+{"name":"ENABLE_OTEL_FRONTEND","secret":false}
+{"name":"ENABLE_VISION_FOLLOW_UP_QUESTIONS","secret":false}
+{"name":"FAST_ANALYSIS_INCLUDE_GLOBAL_NEWS","secret":false}
+{"name":"FEISHU_APP_SECRET","secret":true,"category":"Other secret"}
+{"name":"FEISHU_CONTENT_PUSH_ENABLED","secret":false}
+{"name":"FEISHU_PUSH_MIRROR_WEBHOOK_URL","secret":true,"category":"Webhooks & signing"}
+{"name":"FILE_SIZE_LIMIT","secret":false}
+{"name":"FINNHUB_FREE_ONLY","secret":false}
+{"name":"FINNHUB_TIMEOUT","secret":false}
+{"name":"FLAG_DISABLE_API_RATE_LIMIT","secret":false}
+{"name":"FOLLOWUP_MIN_AHEAD_MS","secret":false}
+{"name":"FORCE_SOCIALACCOUNT_LOGIN","secret":false}
+{"name":"FREENOM_USERNAME","secret":false}
+{"name":"FREEZONE_RECIPE_COMPILER_REASONING_EFFORT","secret":false}
+{"name":"FREQUENCY_PENALTY","secret":false}
+{"name":"FRONTEND_TAG","secret":false}
+{"name":"G4F_BROWSER_LIGHTPANDA_PATH","secret":false}
+{"name":"GOOGLE_ADS_OAUTH_CLIENT_SECRET","secret":true,"category":"Auth & sessions"}
+{"name":"GOOGLE_CLIENT_ID","secret":false}
+{"name":"GOOGLE_OAUTH_CLIENT_ID","secret":false}
+{"name":"GOOGLE_OAUTH_REFRESH_TOKEN","secret":true,"category":"Auth & sessions"}
+{"name":"GOOGLE_WEBHOOK_URL","secret":true,"category":"Webhooks & signing"}
+{"name":"GOTRUE_MAILER_NOTIFICATIONS_IDENTITY_LINKED_ENABLED","secret":false}
+{"name":"GOTRUE_MAILER_SUBJECTS_PHONE_CHANGED_NOTIFICATION","secret":false}
+{"name":"GOTRUE_MAILER_TEMPLATES_RECOVERY","secret":false}
+{"name":"GOTRUE_MAILER_URLPATHS_RECOVERY","secret":false}
+{"name":"GOTRUE_MFA_RECOVERY_CODES_LOCKOUT_DURATION","secret":false}
+{"name":"GOTRUE_SMTP_MAX_FREQUENCY","secret":false}
+{"name":"GRAV_ENVIRONMENT","secret":false}
+{"name":"GRPC_AUTH_TOKEN","secret":true,"category":"Other secret"}
+{"name":"HUDDLE01_API_TOKEN","secret":true,"category":"Other secret"}
+{"name":"IGNORE_DOT_FILES","secret":false}
+{"name":"IMAGE_FORMAT","secret":false}
+{"name":"IMAP_PASSWORD","secret":true,"category":"Email & SMS"}
+{"name":"IMPORT_BULK_CHUNK_SIZE","secret":false}
+{"name":"INTERNAL_SECRET","secret":true,"category":"Other secret"}
+{"name":"KAFKA_AUDIT_GROUP_ID","secret":false}
+{"name":"KAFKA_TOPIC_MARKET_BAR","secret":false}
+{"name":"LANGFUSE_INIT_PROJECT_PUBLIC_KEY","secret":false}
+{"name":"LANGFUSE_INIT_USER_PASSWORD","secret":true,"category":"Other secret"}
+{"name":"LANGFUSE_QUEUE_SIZE","secret":false}
+{"name":"LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT","secret":false}
+{"name":"LLM_MODEL_NAME","secret":false}
+{"name":"LOCALE","secret":false}
+{"name":"LOG_DEPRECATIONS","secret":false}
+{"name":"MAILER_FROM","secret":false}
+{"name":"MAILGUN_DOMAIN","secret":false}
+{"name":"MAKER_WAIT_SEC","secret":false}
+{"name":"MARKET_EXECUTOR_WORKERS","secret":false}
+{"name":"MAX_CONVERSATION_AGE_MINUTES","secret":false}
+{"name":"MCP_SERVER_AUTH_TOKEN","secret":true,"category":"Other secret"}
+{"name":"MEDIA_BROWSER_ENABLED","secret":false}
+{"name":"MEMBERSHIP_MONTHLY_CREDITS","secret":false}
+{"name":"META_SYSTEM_USER_TOKEN","secret":true,"category":"Other secret"}
+{"name":"MFA_ALLOW_TRUSTED_HEADER_BYPASS","secret":false}
+{"name":"MICROSOFT_SSO_CLIENT_ID","secret":false}
+{"name":"MILVUS_METRIC_TYPE","secret":false}
+{"name":"MOBILE_ANDROID_PACKAGES","secret":false}
+{"name":"MYSQL_DATABASE","secret":false}
+{"name":"NEWAPI_RELAY_TOKEN_NAME","secret":false}
+{"name":"NEWAPI_VIDEO_AUDIO_MODELS","secret":false}
+{"name":"NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE","secret":false}
+{"name":"NEXT_PUBLIC_VERCEL_SPEED_INSIGHTS","secret":false}
+{"name":"NEXT_PUBLIC_WEBAPP_URL","secret":false}
+{"name":"NEXT_PUBLIC_WEBSITE_PRIVACY_POLICY_URL","secret":false}
+{"name":"NODE_MAX_OLD_SPACE_SIZE","secret":false}
+{"name":"NOVELVIDEO_DATA_ROOT","secret":false}
+{"name":"NUXT_PUBLIC_SITE_URL","secret":false}
+{"name":"NUXT_REDIRECT_STATUS_CODE","secret":false}
+{"name":"N_CHOICES","secret":false}
+{"name":"OAUTH_GITHUB_CLIENT_SECRET","secret":true,"category":"Auth & sessions"}
+{"name":"OIDC_AUTH_CLIENT_ID","secret":false}
+{"name":"OMNIROUTE_HOST","secret":false}
+{"name":"OPENAI_EMBEDDING_MODEL","secret":false}
+{"name":"OPENSEARCH_INSECURE_SKIP_VERIFY","secret":false}
+{"name":"ORACLE_INSTANT_CLIENT_MIRROR","secret":false}
+{"name":"OSS_BUCKET_NAME","secret":false}
+{"name":"OSS_PATH_PREFIX","secret":false}
+{"name":"OTEL_FRONTEND_FLUSH_INTERVAL_SECONDS","secret":false}
+{"name":"OTEL_METRICS_EXPORTER_INTERVAL","secret":false}
+{"name":"OTEL_RESOURCE_ATTRIBUTES","secret":false}
+{"name":"OTEL_TRACES_SAMPLER_ARG","secret":false}
+{"name":"PADDLEOCR_API_URL","secret":false}
+{"name":"PDF_GENERATOR_REAL","secret":false}
+{"name":"PLAYWRIGHT_WEBKIT_DOWNLOAD_HOST","secret":false}
+{"name":"POSTGRES_RETRIES","secret":false}
+{"name":"POSTIZ_OAUTH_TOKEN_URL","secret":false}
+{"name":"POSTIZ_OAUTH_URL","secret":false}
+{"name":"PRICEAI_API_MODEL_NO_FETCH","secret":false}
+{"name":"PRICEAI_COLLECTOR_NODE_NAME","secret":false}
+{"name":"PRICEAI_COLLECTOR_NODE_RUNTIME","secret":false}
+{"name":"PRICEAI_RISK_REVIEW_BASE_URL","secret":false}
+{"name":"PROMETHEUS_RETENTION","secret":false}
+{"name":"PROMISE_SEMANTIC_ENABLED","secret":false}
+{"name":"PUBLIC_UMAMI_SRC","secret":false}
+{"name":"PUB_PLAUSIBLE_URL","secret":false}
+{"name":"PUSHER_SCHEME","secret":false}
+{"name":"PYCARET_DEBUG","secret":false}
+{"name":"PYCARET_SMTP_USE_TLS","secret":false}
+{"name":"PYCARET_STORAGE_BUCKET","secret":false}
+{"name":"QDRANT_PORT","secret":false}
+{"name":"QUEUE_CONNECTION","secret":false}
+{"name":"RACK_ATTACK_LIMIT","secret":false}
+{"name":"RAMP_CLIENT_SECRET","secret":true,"category":"Auth & sessions"}
+{"name":"REDIS_ADDR","secret":false}
+{"name":"REDIS_SENTINELS","secret":false}
+{"name":"REDIS_TLS_SERVER_NAME","secret":false}
+{"name":"RESUME_EXTRACT_MODEL","secret":false}
+{"name":"S3_ACCESS_KEY_ID","secret":true,"category":"Cloud & infra"}
+{"name":"S3_SECRET_ACCESS_KEY","secret":true,"category":"Cloud & infra"}
+{"name":"SALESFORCE_GRAPHQL_MAX_RETRIES","secret":false}
+{"name":"SANDBOX_CONTAINER_PORT","secret":false}
+{"name":"SANDBOX_K8S_NAMESPACE","secret":false}
+{"name":"SCOUT_DRIVER","secret":false}
+{"name":"SENDGRID_SYNC_API_KEY","secret":true,"category":"Email & SMS"}
+{"name":"SERPAPI_KEYS","secret":true,"category":"Other secret"}
+{"name":"SESSION_PATH","secret":false}
+{"name":"SFTP_PASSWORD","secret":true,"category":"Other secret"}
+{"name":"SIDEKIQ_ALIVE_PORT","secret":false}
+{"name":"SLACK_ID","secret":false}
+{"name":"SMTP_PASS","secret":true,"category":"Email & SMS"}
+{"name":"SMTP_USE_TLS","secret":false}
+{"name":"SOCIALDATA_API_KEY","secret":true,"category":"Other secret"}
+{"name":"SONARQUBE_POSTGRES_PASSWORD","secret":true,"category":"Database"}
+{"name":"SPOTIFY_CLIENT_SECRET","secret":true,"category":"Auth & sessions"}
+{"name":"STRATEGY_COMMAND_STOP_WAIT_SEC","secret":false}
+{"name":"STRATEGY_DISTRIBUTED_BAR_ENABLED","secret":false}
+{"name":"STRATEGY_EVALUATION_TIMEOUT_SEC","secret":false}
+{"name":"STRIPE_CONNECT_WEBHOOK_SECRET","secret":true,"category":"Payments"}
+{"name":"STRIPE_ORG_PRODUCT_ID","secret":false}
+{"name":"STRIPE_SIGNING_KEY","secret":true,"category":"Payments"}
+{"name":"TENCENT_VECTORDB_DATABASE","secret":false}
+{"name":"TRIGGER_API_URL","secret":false}
+{"name":"TRONGRID_BASE_URL","secret":false}
+{"name":"TURNSTILE_SITE_KEY","secret":false}
+{"name":"TWITTER_CONSUMER_SECRET","secret":true,"category":"Auth & sessions"}
+{"name":"UNSUBSCRIBE_HMAC_SECRET","secret":true,"category":"Auth & sessions"}
+{"name":"USDT_PAY_CONFIRM_SECONDS","secret":false}
+{"name":"USDT_SOL_MINT","secret":false}
+{"name":"USE_MINIO","secret":false}
+{"name":"VERIFICATION_CODE_RATE_LIMIT","secret":false}
+{"name":"WEKNORA_DOCUMENT_PROCESS_TIMEOUT","secret":false}
+{"name":"WEKNORA_LLM_STREAM_RAW_DUMP","secret":false}
+{"name":"WEKNORA_TENANT_MAX_OWNED_PER_USER","secret":false}
+{"name":"WHITE_WEBDAV_ENDPOINTS","secret":false}
+{"name":"XAI_API_KEY","secret":true,"category":"AI & LLM"}
