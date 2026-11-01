@@ -108,7 +108,7 @@ The right-hand column is the unseen sample as the rules stood **before** I looke
 ## Commands
 
 ```bash
-apikeys-handler scan   [--platform railway,dotenv,netlify,cloudflare,supabase] [--exposed web,worker] [--json]
+apikeys-handler scan   [--platform railway,dotenv,netlify,cloudflare,supabase] [--exposed web,worker] [--seen seen.json] [--json]
 apikeys-handler plan   [selection]                       # dry run, with the request count
 apikeys-handler rotate [selection] --apply [--yes]
 apikeys-handler status | report [--out file.md] | ui | demo
@@ -116,6 +116,17 @@ apikeys-handler status | report [--out file.md] | ui | demo
 ```
 
 Tokens come from your own environment, never from chat: `RAILWAY_API_TOKEN` (account or workspace token) or `RAILWAY_TOKEN` (project token), `NETLIFY_AUTH_TOKEN`, `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`, `SUPABASE_ACCESS_TOKEN`. Pre-supply a new value with `AKH_NEW_<VARIABLE_NAME>` set in your own terminal; if the same name exists in two environments, use `AKH_NEW_<NAME>__<ENVIRONMENT>` (for example `AKH_NEW_STRIPE_SECRET_KEY__PRODUCTION`). The hidden interactive prompt has only been exercised by hand, not by an automated test.
+
+## Rotate first what your agent has already seen
+
+Anything an agent printed (`cat .env`, `printenv`, a pasted key) was written to its session log and sent to the model provider. [agent-residue](https://github.com/codegobrrrr9/agent-residue) finds those and writes keyed fingerprints, never values:
+
+```bash
+agent-residue seen --out seen.json
+apikeys-handler plan --seen seen.json      # matching variables are marked SEEN BY AGENT and sorted first within their priority
+```
+
+Both tools use the same machine key (`~/.apikeys-handler/key`), so the fingerprints match; a database URL matches through the password inside it.
 
 ## Install by agent
 

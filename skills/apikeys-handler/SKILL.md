@@ -42,7 +42,7 @@ It does not patch anything. If a runtime was vulnerable, patch it first, or the 
 ## Commands
 
 ```
-apikeys-handler scan   [--platform railway,dotenv,netlify,cloudflare,supabase] [--exposed web,worker] [--json]
+apikeys-handler scan   [--platform railway,dotenv,netlify,cloudflare,supabase] [--exposed web,worker] [--seen seen.json] [--json]
 apikeys-handler plan   [selection]                 dry run
 apikeys-handler rotate [selection] --apply [--yes]
 apikeys-handler status                             progress, survives a restart

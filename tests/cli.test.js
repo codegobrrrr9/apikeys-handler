@@ -134,3 +134,24 @@ test('AKH_NEW_<NAME> is refused when two groups carry the name (production and s
   assert.ok(!stg().includes('LIVEKEY'), 'the live key never reaches staging');
   assert.ok(!ok.all.includes(LIVE) && !amb.all.includes(LIVE));
 });
+
+test('--seen: secrets listed by agent-residue (keyed fingerprints, no values) are marked SEEN BY AGENT, also through the password inside a URL, and sorted first', async () => {
+  process.env.APIKEYS_HANDLER_HOME = HOME;                       // the same machine key the CLI child uses
+  const { fingerprint, resetKeyCache } = await import('../skills/apikeys-handler/scripts/classify.js');
+  resetKeyCache();
+  const { writeFileSync } = await import('node:fs');
+  const d = gitDir();
+  const seenPw = 'Zq8mK2vR9xTe5LbN3wYc', otherPw = 'Hd4pS7aU1gJf6QoV0iXz', jwt = 'Pn3rT8yWk1Bv5HcM9eLx';
+  writeFileSync(join(d, '.env'), `DATABASE_URL=postgres://app:${seenPw}@db:5432/app\nREDIS_URL=redis://:${otherPw}@cache:6379\nJWT_SECRET=${jwt}\n`);
+  const seenFile = join(d, 'seen.json');
+  writeFileSync(seenFile, JSON.stringify({ version: 1, items: [{ fp: fingerprint(seenPw), type: 'url_credential' }, { fp: fingerprint(jwt), type: 'named_secret' }] }));
+  const r = await cli(d, ['plan', '--platform', 'dotenv', '--seen', seenFile], { APIKEYS_HANDLER_HOME: HOME });
+  assert.equal(r.status, 0, r.all);
+  assert.match(r.all, /seen: 2 variables match secrets your agent has seen/);
+  assert.match(r.all, /DATABASE_URL.*SEEN BY AGENT/); assert.match(r.all, /JWT_SECRET.*SEEN BY AGENT/);
+  assert.ok(!/REDIS_URL.*SEEN BY AGENT/.test(r.all), 'a secret the agent has not seen is not marked');
+  assert.ok(r.all.indexOf('DATABASE_URL') < r.all.indexOf('REDIS_URL'), 'seen first within the same priority');
+  for (const v of [seenPw, otherPw, jwt]) assert.ok(!r.all.includes(v));
+  const bad = await cli(d, ['plan', '--platform', 'dotenv', '--seen', join(d, 'missing.json')], { APIKEYS_HANDLER_HOME: HOME });
+  assert.equal(bad.status, 2);
+});

@@ -76,6 +76,18 @@ export function effectivePriority(base, exposed) {
   return PRI[Math.min(PRI.indexOf(base) + 1, 3)];
 }
 
+// A secret an agent has already seen (printed into its context, kept in its logs) was sent to the model provider: rotate it first.
+// seenFps comes from `agent-residue seen`: keyed fingerprints made with the same machine key. A connection URL matches through the
+// password inside it as well as through the whole value.
+export function markSeen(items, seenFps) {
+  const set = new Set(seenFps);
+  for (const i of items) {
+    const cred = credentialOf(i.value);
+    i.seen = !!((i.fp && set.has(i.fp)) || (cred && set.has(fingerprint(cred))));
+  }
+  return items.filter(i => i.seen).length;
+}
+
 // ---------- selection and grouping ----------
 export function selectItems(items, sel = {}, state = null) {
   const ids = sel.ids ? new Set(sel.ids) : null;
@@ -120,10 +132,10 @@ export function groupItems(items, regroup = null) {
       provider: members.find(m => m.provider)?.provider || null, link: members.find(m => m.link)?.link || null,
       warns: [...new Set([...members.map(m => m.warn).filter(Boolean), ...members.flatMap(m => (m.links || []).map(l => `${m.name} shares its secret with ${l.name} (${l.service ?? 'shared'}): they hold the same value, so change them together`))])],
       services: [...new Set(members.map(m => m.service ?? '(shared)'))], exposed: members.some(m => m.exposed === true),
-      fp: members[0].fp, items: members,
+      fp: members[0].fp, seen: members.some(m => m.seen === true), items: members,
     };
   });
-  groups.sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority) || cats.indexOf(a.category) - cats.indexOf(b.category) || Number(b.exposed) - Number(a.exposed) || a.names[0].localeCompare(b.names[0]));
+  groups.sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority) || Number(b.seen) - Number(a.seen) || cats.indexOf(a.category) - cats.indexOf(b.category) || Number(b.exposed) - Number(a.exposed) || a.names[0].localeCompare(b.names[0]));
   return groups;
 }
 

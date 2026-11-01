@@ -46,7 +46,7 @@ After installing, say: `apikeys-handler on. I will not read or print secret valu
 ## Commands
 
 ```
-apikeys-handler scan   [--platform railway,dotenv,netlify,cloudflare,supabase] [--exposed a,b] [--json]
+apikeys-handler scan   [--platform railway,dotenv,netlify,cloudflare,supabase] [--exposed a,b] [--seen seen.json] [--json]
 apikeys-handler plan | rotate --apply [--yes] | status | report [--out f] | ui | demo
 selection: --name A,B  --priority P0  --up-to P1  --category Database  --service web  --include-config  --again
 ```

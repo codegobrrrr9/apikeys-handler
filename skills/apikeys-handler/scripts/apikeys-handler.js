@@ -9,11 +9,11 @@
 // workspace token) or RAILWAY_TOKEN (project token), NETLIFY_AUTH_TOKEN, CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID,
 // SUPABASE_ACCESS_TOKEN. Pre-supply a new value with AKH_NEW_<VARIABLE_NAME> in your own terminal.
 
-import { realpathSync, writeFileSync } from 'node:fs';
+import { realpathSync, writeFileSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { redact, registerSecret, defaultRules, loadRules } from './classify.js';
-import { inventory, buildPlan, rotate, loadState, reportMarkdown, summarize, findSplits } from './engine.js';
+import { inventory, buildPlan, rotate, loadState, reportMarkdown, summarize, findSplits, markSeen } from './engine.js';
 import { railwayAdapter } from './railway.js';
 import { dotenvAdapter } from './dotenv.js';
 
@@ -81,7 +81,7 @@ function printScan(items, warnings, flags) {
       const tag = i.derived ? 'derived' : i.empty ? 'empty' : i.how;
       const users = [...new Set(i.usedBy.map(u => u.service))].filter(s => s !== i.service);
       const used = (users.length ? `  used by ${users.join(', ')}` : '') + ((i.links || []).length ? `  same secret as ${i.links.map(l => l.name + ' (' + (l.service ?? 'shared') + ')').join(', ')}` : '');
-      const exp = i.exposed === true ? '  EXPOSED' : '';
+      const exp = (i.exposed === true ? '  EXPOSED' : '') + (i.seen ? '  SEEN BY AGENT' : '');
       out(`  ${i.priority}  ${pad(i.category, 22)} ${pad(i.name, 30)} ${pad(tag, 9)}${flags['no-fp'] || !i.fp ? '' : ' fp ' + i.fp}${used}${exp}`);
     }
   }
@@ -92,7 +92,7 @@ function printPlan(plan, apply) {
   const e = plan.estimate;
   out(`apikeys-handler plan  ·  ${plan.groups.length} rotations  ·  P0 ${plan.counts.P0} · P1 ${plan.counts.P1} · P2 ${plan.counts.P2}  ·  ${e.writes} writes + ${e.redeploys} restarts = ${e.total} requests`);
   for (const g of plan.groups) {
-    out(`\n${g.priority}  ${pad(g.category, 22)} ${g.names.join(', ')}  [${g.how}]  ${g.services.join(', ')}${g.exposed ? '  EXPOSED' : ''}${g.items.length > 1 ? `  (${g.items.length} places, one value)` : ''}`);
+    out(`\n${g.priority}  ${pad(g.category, 22)} ${g.names.join(', ')}  [${g.how}]  ${g.services.join(', ')}${g.exposed ? '  EXPOSED' : ''}${g.seen ? '  SEEN BY AGENT' : ''}${g.items.length > 1 ? `  (${g.items.length} places, one value)` : ''}`);
     if (g.link) out(`    new key: ${g.link}`);
     for (const w of g.warns) out(`    ! ${w}`);
   }
@@ -171,6 +171,12 @@ export async function main(argv) {
   const adapters = await makeAdapters(f);
   const exposed = list(f.exposed) || [];
   const { items, warnings } = await inventory(adapters, { exposed, rules: loadRules(dir) });
+  if (f.seen) {
+    // fingerprints from `agent-residue seen`: secrets your agent has already seen are rotated first
+    let seenFile; try { seenFile = JSON.parse(readFileSync(resolve(String(f.seen)), 'utf8')); } catch { err('apikeys-handler: could not read the --seen file (expected the JSON from `agent-residue seen`).'); return 2; }
+    const n = markSeen(items, (seenFile.items || []).map(x => x.fp).filter(Boolean));
+    err(`seen: ${n} variables match secrets your agent has seen (keyed fingerprints, no values).`);
+  }
   const state = loadState(dir);
 
   if (cmd === 'scan') {
