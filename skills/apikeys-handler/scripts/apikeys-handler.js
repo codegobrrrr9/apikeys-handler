@@ -96,7 +96,8 @@ function printPlan(plan, apply) {
     if (g.link) out(`    new key: ${g.link}`);
     for (const w of g.warns) out(`    ! ${w}`);
   }
-  if (plan.units.length) out(`\nrestart order: ${plan.units.map(u => u.label).join(' → ')}`);
+  const named = plan.units.filter(u => u.label !== '(environment)');
+  if (named.length) out(`\nrestart order: ${named.map(u => u.label).join(' → ')}`);
   if (plan.skipped.length) { out(`\nskipped ${plan.skipped.length}:`); for (const s of plan.skipped.slice(0, 25)) out(`  ${s.service ?? '(shared)'} ${s.name}: ${s.reason}`); if (plan.skipped.length > 25) out(`  … ${plan.skipped.length - 25} more`); }
   if (!apply) out('\nDry run: nothing was written. Add --apply to rotate.');
 }

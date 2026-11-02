@@ -152,6 +152,7 @@ test('--seen: secrets listed by agent-residue (keyed fingerprints, no values) ar
   assert.ok(!/REDIS_URL.*SEEN BY AGENT/.test(r.all), 'a secret the agent has not seen is not marked');
   assert.ok(r.all.indexOf('DATABASE_URL') < r.all.indexOf('REDIS_URL'), 'seen first within the same priority');
   for (const v of [seenPw, otherPw, jwt]) assert.ok(!r.all.includes(v));
+  assert.ok(!/restart order/.test(r.all), 'a .env has nothing to restart, so no empty restart order line');
   const bad = await cli(d, ['plan', '--platform', 'dotenv', '--seen', join(d, 'missing.json')], { APIKEYS_HANDLER_HOME: HOME });
   assert.equal(bad.status, 2);
 });
